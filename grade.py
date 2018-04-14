@@ -8,7 +8,10 @@ shutil.copy2("test.ml", "/autograder/submission/")
 shutil.move("/autograder/submission/input/", "/autograder/submission/stu-input")
 shutil.copytree("input", "/autograder/submission/input/")
 os.chdir("/autograder/submission/")
-os.mkdir("output")
+
+if not os.path.exists("output"):
+    os.mkdir("output")
+
 with open("_tags", "w"):
     pass
 
@@ -28,6 +31,7 @@ out_run, err_run = subprocess.Popen(" ".join(["./test",
 
 test_cases = 0
 tests_passed = 0
+tests_errored = 0
 tests_failed = 0
 
 # Check if test passed
@@ -36,7 +40,8 @@ if os.path.exists("results.log"):
         lines = f.readlines()
         test_cases = int(re.search('Cases: (\d+).', lines[-7]).group(1))
         tests_failed = int(re.search('Failures: (\d+).', lines[-4]).group(1))
-        tests_passed = test_cases - tests_failed
+        tests_errored = int(re.search('Errors: (\d+).', lines[-5]).group(1))
+        tests_passed = test_cases - tests_failed - tests_errored
 
 total_score = {
     'output': "",

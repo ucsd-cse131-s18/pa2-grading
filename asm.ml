@@ -3,6 +3,7 @@ open Printf
 type reg =
   | EAX
   | ESP
+  | EBP
 
 type arg =
   | Const of int
@@ -14,12 +15,22 @@ type instruction =
   | IAdd of arg * arg
   | ISub of arg * arg
   | IMul of arg * arg
+  | IShr of arg * arg
+  | IShl of arg * arg
+  | IAnd of arg * arg
+  | IOr of arg * arg
+  | IXor of arg * arg
   | ILabel of string
+  | IPush of arg
+  | IPop of arg
+  | ICall of string
+  | IRet
   | ICmp of arg * arg
   | IJne of string
+  | IJe of string
   | IJmp of string
-  | IRet
-
+  | IJno of string
+  | IJo of string
 
 let count = ref 0
 let gen_temp base =
@@ -30,6 +41,7 @@ let r_to_asm (r : reg) : string =
   match r with
   | EAX -> "eax"
   | ESP -> "esp"
+  | EBP -> "ebp"
 
 let arg_to_asm (a : arg) : string =
   match a with

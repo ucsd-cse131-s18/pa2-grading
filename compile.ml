@@ -9,6 +9,14 @@ let rec find ls x =
     if y = x then Some(v) else find rest x
 
 let stackloc si = RegOffset(-4 * si, ESP)
+let throw_err code = failwith "TODO: throw_err"
+let check_overflow = IJo("overflow_check")
+let error_non_int = "error_non_int"
+let error_non_bool = "error_non_bool"
+
+let check_num = failwith "TODO: check_num"
+
+let rec check (e : expr) : string list = failwith "TODO: check"
 
 let rec compile_expr (e : expr) (si : int) (env : (string * int) list) : instruction list =
   match e with
@@ -52,11 +60,26 @@ and compile_prim2 op e1 e2 si env =
   second_op @ [IMov((stackloc si),Reg(EAX))] @ first_op @ [instr]
 
 let compile_to_string prog =
-  let prelude =
-    "section .text\n" ^
-    "global our_code_starts_here\n" ^
-    "our_code_starts_here:" in
+  let static_errors = check prog in
+  let stackjump = 0 in
+  let prelude = "section .text
+extern error
+extern print
+extern input
+global our_code_starts_here
+our_code_starts_here:
+  push ebp
+  mov ebp, esp
+  sub esp, " ^ (string_of_int stackjump) ^ "\n" in
+  let postlude = [
+    IMov(Reg(ESP), Reg(EBP));
+    IPop(Reg(EBP));
+    IRet;
+    ILabel("overflow_check")
+  ]
+  @ (throw_err 3)
+  @ [ILabel(error_non_int)] @ (throw_err 1)
+  @ [ILabel(error_non_bool)] @ (throw_err 2) in
   let compiled = (compile_expr prog 1 []) in
-  let as_assembly_string = (to_asm (compiled @ [IRet])) in
+  let as_assembly_string = (to_asm (compiled @ postlude)) in
   sprintf "%s%s\n" prelude as_assembly_string
-

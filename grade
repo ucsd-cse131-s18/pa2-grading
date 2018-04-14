@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd "${0%/*}"
+
+eval `opam config env --root=/usr/local/opam/`
+. /usr/local/opam/opam-init/init.sh
+
+python grade.py

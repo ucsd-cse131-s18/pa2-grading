@@ -13,7 +13,7 @@ let rec parse (sexp : Sexplib.Sexp.t) =
      | "let" ->
        (match t with
         | (List(bindings))::body::[] ->
-          let binds = List.map parse_bindings bindings in
+          let binds = List.map parse_binding bindings in
           let body = parse body in
           ELet(binds, body)
         | _ -> failwith "Error: invalid let syntax")
@@ -57,7 +57,7 @@ let rec parse (sexp : Sexplib.Sexp.t) =
     let s = Printf.sprintf "Error: unknown sexp %s" (to_string_hum sexp) in
     failwith s
 
-and parse_bindings binding =
+and parse_binding binding =
   match binding with
   | List((Atom s)::t::[]) ->
     (s,parse t)

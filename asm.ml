@@ -25,6 +25,7 @@ type instruction =
   | IMul of arg * arg
 
   | IShr of arg * arg
+  | ISar of arg * arg
   | IShl of arg * arg
 
   | IAnd of arg * arg
@@ -92,6 +93,8 @@ let i_to_asm (i : instruction) : string =
       sprintf "  xor %s, %s" (arg_to_asm dest) (arg_to_asm mask)
     | IShr(dest, to_shift) ->
       sprintf "  shr %s, %s" (arg_to_asm dest) (arg_to_asm to_shift)
+    | ISar(dest, to_shift) ->
+      sprintf "  sar %s, %s" (arg_to_asm dest) (arg_to_asm to_shift)
     | IShl(dest, to_shift) ->
       sprintf "  shl %s, %s" (arg_to_asm dest) (arg_to_asm to_shift)
     | ICmp(left, right) ->
@@ -119,7 +122,7 @@ let i_to_asm (i : instruction) : string =
     | IJmp(label) ->
       sprintf "  jmp %s" label
     | IRet ->
-      " ret"
+      "  ret"
 
 let to_asm (is : instruction list) : string =
   List.fold_left (fun s i -> sprintf "%s\n%s" s (i_to_asm i)) "" is

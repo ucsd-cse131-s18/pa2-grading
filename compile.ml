@@ -10,6 +10,7 @@ let rec find ls x =
 
 let stackloc si = RegOffset(-4 * si, ESP)
 let throw_err code = [IMov(Reg(EAX), Const(code));
+                      IPush(Reg(EAX));
                       ICall("error");]
 let check_overflow = IJo("overflow_check")
 let error_non_int = "error_non_int"
@@ -81,7 +82,7 @@ and compile_prim2 op e1 e2 si env =
       [IAnd(Reg(EAX), true_const);
        IMov(stackloc (si + 1), Reg(EAX));
        IMov(Reg(EAX), stackloc si);
-       IShr(Reg(EAX), Const(1));
+       ISar(Reg(EAX), Const(1));
        IMul(Reg(EAX), stackloc (si + 1));
        check_overflow;
        IAdd(Reg(EAX), Const(1));],true
@@ -147,7 +148,7 @@ let compile_to_string prog =
     "our_code_starts_here:\n" ^
     "  push ebp\n" ^
     "  mov ebp, esp\n" ^
-    "  sub esp, " ^ (string_of_int stackjump) ^ "\n" in
+    "  sub esp, " ^ (string_of_int stackjump) in
   let postlude = [
     IMov(Reg(ESP), Reg(EBP));
     IPop(Reg(EBP));

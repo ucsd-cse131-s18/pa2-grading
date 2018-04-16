@@ -23,7 +23,7 @@ test: compile.ml runner.ml test.ml parser.ml
 	mv test.native test
 
 output/%.run: output/%.o main.c
-	clang -g -m32 -o $@ main.c $<
+	clang -g -m32 -mstackrealign -o $@ main.c $<
 
 output/%.o: output/%.s
 	nasm -f $(FORMAT) -o $@ $<

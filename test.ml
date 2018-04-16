@@ -4,24 +4,15 @@ open Printf
 open OUnit2
 open Expr
 
-let is_osx = Conf.make_bool "osx" false "Set this flag to run on osx";;
-let t name program expected = name>::test_run program name expected;;
-
-let t_err name program expected =
-  name>::test_err program name expected
-
+let is_osx = Conf.make_bool "osx" false "Set this flag to run on osx"
+let t_i name program expected args = name>::test_run program name expected args
+let t name program expected = name>::test_run program name expected []
+let terr_i name program expected args = name>::test_err program name expected args
+let t_err name program expected = name>::test_err program name expected []
 let t_parse name program expected =
   name>::(fun _ -> assert_equal expected (Runner.parse_string program));;
-
-let t_input name program input expected =
-  name>::test_run_input program name input expected
-
-let t_input_err name program input errmsg =
-  name>::test_err_input program name input errmsg
-
 let t_f test_type = (fun (name,program,expected) ->
   test_type name program expected)
-
 let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
 
 let forty_one = "(sub1 42)";;
@@ -187,9 +178,18 @@ let testFailList =
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
    t_err "failID" failID "Compile error: Variable identifier x unbounded";
    t_err "failTypes" failTypes "expected a number";
-   t_input_err "failInput" "input" "0r" "input must be a boolean or a number";
-   t_input_err "failInputType" "(add1 input)" "true" "expected a number";
+   terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
+   terr_i "failInputType" "(add1 input)" "expected a number" ["true"];
   ]
+
+let input_tests =
+ [ t_i "input1" "input" "42" ["42"]
+ ; t_i "input2" "input" "true" ["true"]
+ ; t_i "input3" "input" "false" ["false"]
+
+ ; terr_i "inputerr1" "input" "Error: input must be a boolean or a number" ["ABC"]
+ ; terr_i "inputerr2" "input" "Error: input is not a representable number" ["99999999999"]
+ ]
 
 let suite =
   "suite">:::
@@ -214,8 +214,9 @@ let suite =
    t "isBoolTest" isBoolTest "true";
    t "isBoolTestF" isBoolTestF "false";
    t "isNumTest" isNumTest "true";
-   t_input "inputTest" "(add1 input)" "5" "6";
+   t_i "inputTest" "(add1 input)" "6" ["5"];
   ] @ testFailList
+  @ input_tests @ testFailList
   @ (List.map (t_f t_parse) autograde_parse_tests)
   @ (List.map (t_f t) autograde_tests)
   @ (List.map (t_f t_err) autograde_fail_tests)

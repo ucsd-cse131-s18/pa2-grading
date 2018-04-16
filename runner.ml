@@ -46,7 +46,7 @@ let string_of_file file_name =
   really_input inchan buf 0 (in_channel_length inchan);
   Bytes.to_string buf
 
-let run p out =
+let run p out args=
   let maybe_asm_string =
     try Right(compile_to_string p)
     with Failure s ->
@@ -78,55 +78,7 @@ let run p out =
     | Left(_) -> try_running
     | Right(msg) ->
       printf "%s" msg;
-      let ran_pid = Unix.create_process ("./" ^ out ^ ".run") (Array.of_list []) rstdin rstdout rstderr in
-      let (_, status) = waitpid [] ran_pid in
-      match status with
-        | WEXITED 0 -> Right(string_of_file rstdout_name)
-        | WEXITED n -> Left(sprintf "Error %d: %s" n (string_of_file rstderr_name))
-        | WSIGNALED n ->
-          Left(sprintf "Signalled with %d while running %s." n out)
-        | WSTOPPED n ->
-          Left(sprintf "Stopped with signal %d while running %s." n out) in
-
-    List.iter close [bstdout; bstderr; bstdin; rstdout; rstderr; rstdin];
-    List.iter unlink [bstdout_name; bstderr_name; rstdout_name; rstderr_name];
-    result
-
-let run_input p out input =
-  let maybe_asm_string =
-    try Right(compile_to_string p)
-    with Failure s ->
-      Left("Compile error: " ^ s)
-  in
-  match maybe_asm_string with
-  | Left(s) -> Left(s)
-  | Right(asm_string) ->
-    let outfile = open_out (out ^ ".s") in
-    fprintf outfile "%s" asm_string;
-    close_out outfile;
-    let (bstdout, bstdout_name, bstderr, bstderr_name, bstdin) = make_tmpfiles "build" in
-    let (rstdout, rstdout_name, rstderr, rstderr_name, rstdin) = make_tmpfiles "build" in
-    let built_pid = Unix.create_process "make" (Array.of_list [""; out ^ ".run"])
-                      bstdin bstdout bstderr in
-    let (_, status) = waitpid [] built_pid in
-
-    let try_running = match status with
-    | WEXITED 0 ->
-      Right(string_of_file rstdout_name)
-    | WEXITED _ ->
-      Left(sprintf "Finished with error while building %s:\n%s" out
-             (string_of_file bstderr_name))
-    | WSIGNALED n ->
-      Left(sprintf "Signalled with %d while building %s." n out)
-    | WSTOPPED n ->
-      Left(sprintf "Stopped with signal %d while building %s." n out) in
-
-    let result = match try_running with
-    | Left(_) -> try_running
-    | Right(msg) ->
-      printf "%s" msg;
-      let ran_pid = Unix.create_process ("./" ^ out ^ ".run")
-                      (Array.of_list [""; input]) rstdin rstdout rstderr in
+      let ran_pid = Unix.create_process ("./" ^ out ^ ".run") (Array.of_list (""::args)) rstdin rstdout rstderr in
       let (_, status) = waitpid [] ran_pid in
       match status with
         | WEXITED 0 -> Right(string_of_file rstdout_name)
@@ -145,13 +97,13 @@ let try_parse prog_str =
   | Failure s -> Left("Parse error: " ^ s)
 
 
-let test_run program_str outfile expected _ =
+let test_run program_str outfile expected (args : string list) _ =
   let full_outfile = "output/" ^ outfile in
   let program = parse_string program_str in
-  let result = run program full_outfile in
+  let result = run program full_outfile args in
   assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
 
-let test_err program_str outfile errmsg _ =
+let test_err program_str outfile errmsg (args : string list) _ =
   let full_outfile = "output/" ^ outfile in
   let program = try_parse program_str in
   match program with
@@ -167,7 +119,7 @@ let test_err program_str outfile errmsg _ =
         | _ -> false
       )
   | Right(program) ->
-    let result = run program full_outfile in
+    let result = run program full_outfile args in
     assert_equal
       (Left(errmsg))
       result
@@ -179,36 +131,3 @@ let test_err program_str outfile errmsg _ =
         | _ -> false
       )
 
-let test_run_input program_str outfile input expected _ =
-  let full_outfile = "output/" ^ outfile in
-  let program = parse_string program_str in
-  let result = run_input program full_outfile input in
-  assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
-
-let test_err_input program_str outfile input errmsg _ =
-  let full_outfile = "output/" ^ outfile in
-  let program = try_parse program_str in
-  match program with
-  | Left(_) as e ->
-    assert_equal
-      (Left(errmsg))
-      e
-      ~printer:either_printer
-      ~cmp: (fun check result ->
-        match check, result with
-        | Left(expect_msg), Left(actual_message) ->
-          String.exists actual_message expect_msg
-        | _ -> false
-      )
-  | Right(program) ->
-    let result = run_input program full_outfile input in
-    assert_equal
-      (Left(errmsg))
-      result
-      ~printer:either_printer
-      ~cmp: (fun check result ->
-        match check, result with
-        | Left(expect_msg), Left(actual_message) ->
-          String.exists actual_message expect_msg
-        | _ -> false
-      )

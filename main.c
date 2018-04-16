@@ -5,6 +5,9 @@
 #define TRUE 0xFFFFFFFE
 #define FALSE 0x7FFFFFFE
 
+const long int INT_MIN = - (1 << 30);
+const long int INT_MAX = (1 << 30) - 1;
+
 extern int our_code_starts_here(int input_val) asm("our_code_starts_here");
 extern void error(int val) asm("error");
 
@@ -30,6 +33,8 @@ void error(int error_code) {
     fprintf(stderr, "Error: overflow\n");
   else if (error_code == 4)
     fprintf(stderr, "Error: input must be a boolean or a number\n");
+  else if (error_code == 5)
+    fprintf(stderr, "Error: input is not a representable number\n");
   exit(123456);
 }
 
@@ -44,11 +49,16 @@ int main(int argc, char** argv) {
       input_val = TRUE;
     } else if (!strcmp("false", argv[1])) {
       input_val = FALSE;
-    } else if (((input_val = strtol(argv[1], &endptr, 0)) || 1) &&
-        !(*endptr) && !errno) {
-      input_val = (input_val << 1) | 1;
     } else {
-      error(4);
+      char* endptr = (char*) &argv[1];
+      long r = strtol(argv[1], &endptr, 10);
+      if (*endptr != '\0') {
+        error(4);
+      }
+      else if ( errno ) {
+        error(5);
+      }
+      input_val = r << 1 | 1;
     }
   }
   int result = our_code_starts_here(input_val);

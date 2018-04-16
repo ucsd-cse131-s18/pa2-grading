@@ -97,13 +97,13 @@ let try_parse prog_str =
   | Failure s -> Left("Parse error: " ^ s)
 
 
-let test_run program_str outfile expected (args : string list) test_ctxt =
+let test_run program_str outfile expected (args : string list) _ =
   let full_outfile = "output/" ^ outfile in
   let program = parse_string program_str in
   let result = run program full_outfile args in
   assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
 
-let test_err program_str outfile errmsg (args : string list) test_ctxt =
+let test_err program_str outfile errmsg (args : string list) _ =
   let full_outfile = "output/" ^ outfile in
   let program = try_parse program_str in
   match program with

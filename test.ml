@@ -5,7 +5,9 @@ open OUnit2
 open Expr
 
 let is_osx = Conf.make_bool "osx" false "Set this flag to run on osx";;
-let t name program expected = name>::test_run program name expected;;
+let t_i name program expected args = name>::test_run program name expected args;;
+let t name program expected = name>::test_run program name expected [];;
+let terr_i name program expected args = name>::test_err program name expected args;;
 
 let forty_one = "(sub1 42)";;
 let forty = "(sub1 (sub1 42))";;
@@ -167,7 +169,7 @@ let autograde_fail_tests =
   ]
 ;;
 let t_err name program expected =
-  name>::test_err program name expected
+  name>::test_err program name expected []
 
 let t_f test_type = (fun (name,program,expected) ->
   test_type name program expected)
@@ -183,6 +185,15 @@ let testFailList =
    t_err "failTypes" failTypes "expected a number";
   ]
 ;;
+
+let input_tests =
+ [ t_i "input1" "input" "42" ["42"]
+ ; t_i "input2" "input" "true" ["true"]
+ ; t_i "input3" "input" "false" ["false"]
+
+ ; terr_i "inputerr1" "input" "Error: input must be a boolean or a number" ["ABC"]
+ ; terr_i "inputerr2" "input" "Error: input is not a representable number" ["99999999999"]
+ ]
 
 let suite =
   "suite">:::
@@ -207,7 +218,7 @@ let suite =
    t "isBoolTest" isBoolTest "true";
    t "isBoolTestF" isBoolTestF "false";
    t "isNumTest" isNumTest "true";
-  ] @ testFailList
+  ] @ input_tests @ testFailList
   @ (List.map (t_f t_parse) autograde_parse_tests)
   @ (List.map (t_f t) autograde_tests)
   @ (List.map (t_f t_err) autograde_fail_tests)

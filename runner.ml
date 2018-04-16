@@ -46,7 +46,7 @@ let string_of_file file_name =
   really_input inchan buf 0 (in_channel_length inchan);
   Bytes.to_string buf
 
-let run p out =
+let run p out args=
   let maybe_asm_string =
     try Right(compile_to_string p)
     with Failure s ->
@@ -78,7 +78,7 @@ let run p out =
     | Left(_) -> try_running
     | Right(msg) ->
       printf "%s" msg;
-      let ran_pid = Unix.create_process ("./" ^ out ^ ".run") (Array.of_list []) rstdin rstdout rstderr in
+      let ran_pid = Unix.create_process ("./" ^ out ^ ".run") (Array.of_list (""::args)) rstdin rstdout rstderr in
       let (_, status) = waitpid [] ran_pid in
       match status with
         | WEXITED 0 -> Right(string_of_file rstdout_name)
@@ -97,13 +97,13 @@ let try_parse prog_str =
   | Failure s -> Left("Parse error: " ^ s)
 
 
-let test_run program_str outfile expected _ =
+let test_run program_str outfile expected (args : string list) test_ctxt =
   let full_outfile = "output/" ^ outfile in
   let program = parse_string program_str in
-  let result = run program full_outfile in
+  let result = run program full_outfile args in
   assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
 
-let test_err program_str outfile errmsg _ =
+let test_err program_str outfile errmsg (args : string list) test_ctxt =
   let full_outfile = "output/" ^ outfile in
   let program = try_parse program_str in
   match program with
@@ -119,7 +119,7 @@ let test_err program_str outfile errmsg _ =
         | _ -> false
       )
   | Right(program) ->
-    let result = run program full_outfile in
+    let result = run program full_outfile args in
     assert_equal
       (Left(errmsg))
       result

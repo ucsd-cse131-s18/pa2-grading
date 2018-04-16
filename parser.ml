@@ -2,7 +2,7 @@ open Sexplib.Sexp
 open Expr
 
 let reserved_words = ["let"; "add1"; "sub1"; "isNum"; "isBool"; "if"]
-let reserved_constants = ["true"; "false"; "input";]
+let reserved_constants = ["true"; "false"; ]
 let int_of_string_opt s =
   try Some(int_of_string s) with
   | _ -> None
@@ -87,7 +87,6 @@ let rec parse (sexp : Sexplib.Sexp.t) =
          (match s with
           | "true" -> EBool(true)
           | "false" -> EBool(false)
-          | "input" -> EInput
           | _ -> EId(s))
        else
          failwith ("Invalid or unexpected id name " ^ s))

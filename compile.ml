@@ -46,7 +46,6 @@ let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
     (well_formed_e left env)@(well_formed_e right env)
   | EIf(cond, thn, els) ->
     (well_formed_e cond env)@(well_formed_e thn env)@(well_formed_e els env)
-  | EInput -> []
   | ELet(binds, body) ->
     (* Assume the parser will never give an empty binding list *)
       match binds with
@@ -70,7 +69,7 @@ let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
         errAcc'@(well_formed_e body envAcc')
 
 let check (e : expr) : string list =
-  match well_formed_e e [] with
+  match well_formed_e e [("input", -1)] with
   | [] -> []
   | errs -> failwith (String.concat "\n" errs)
 
@@ -117,7 +116,6 @@ let rec compile_expr (e : expr) (si : int) (env : (string * int) list)
   | EBool(b) ->
     let b = if b then true_const else false_const in
     [IMov(Reg(EAX),b)]
-  | EInput -> [IMov(Reg(EAX), stackloc (-1))]
   | EId(nm) ->
     match find env nm with
     | Some(sloc) -> [IMov(Reg(EAX),(stackloc sloc))]
@@ -234,6 +232,6 @@ let compile_to_string prog =
                  @ [ILabel("overflow_check")] @ (throw_err 3)
                  @ [ILabel(error_non_int)] @ (throw_err 1)
                  @ [ILabel(error_non_bool)] @ (throw_err 2) in
-  let compiled = (compile_expr prog 1 []) in
+  let compiled = (compile_expr prog 1 [("input", -1)]) in
   let as_assembly_string = (to_asm (compiled @ postlude)) in
   sprintf "%s%s\n" prelude as_assembly_string

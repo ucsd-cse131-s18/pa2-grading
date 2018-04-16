@@ -121,6 +121,11 @@ let autograde_tests =
     ("complex_if", complex_if, "7");
     ("equality_check", equality_check, "true");
     ("nequality_check", nequality_check, "false");
+    ("lessThanTest", "(< 3 4)", "true");
+    ("nlessThanTest", "(< 4 3)", "false");
+    ("nlessThanTestEq", "(< 3 3)", "false");
+    ("boolEvalonlyif", "(if (= 5 5) 2 (+ true false))", "2");
+    ("boolEvalonlyelse", "(if (< 5 5) (+ true false) 3)", "3");
   ]
 ;;
 
@@ -136,6 +141,29 @@ let autograde_fail_tests =
     ("- syntax", "(- 3 2 1)", "Error: invalid - syntax");
     ("* syntax", "(* 1 2 3)", "Error: invalid * syntax");
     ("invalid sexp", "()", "Error: unknown sexp ()");
+    ("overflowAdd1", "(add1 1073741823)", "overflow");
+    ("underflowSub1", "(sub1 -1073741824)", "overflow");
+    ("overflowAdd", "(+ 1073741811 100000)", "overflow");
+    ("overflowSub", "(- 1073741811 -100000)", "overflow");
+    ("underFlowAdd", "(+ -1073741811 -100000)", "overflow");
+    ("underFlowSub", "(- -1073741811 100000)", "overflow");
+    ("overFlowTimes", "(* 1000000 100000)", "overflow");
+    ("underflowTimes", "(* 1000000 -11230000)", "overflow");
+    ("addBoolL", "(+ true -11230000)", "expected a number");
+    ("addBoolR", "(+ 0 false)", "expected a number");
+    ("subBoolL", "(- true -11230000)", "expected a number");
+    ("subBoolR", "(- 0 false)", "expected a number");
+    ("mulBoolL", "(* true -11230000)", "expected a number");
+    ("mulBoolR", "(* 0 false)", "expected a number");
+    ("lessBoolL", "(< true -11230000)", "expected a number");
+    ("lessBoolR", "(< 0 false)", "expected a number");
+    ("grtrBoolL", "(> true -11230000)", "expected a number");
+    ("grtrBoolR", "(> 0 false)", "expected a number");
+    ("eqExpectInt", "(= 0 false)", "expected a number");
+    ("eqExpectBool", "(= false 0)", "expected a bool");
+    ("lToREval", "(* (+ 0 false) (if 5 3 4))", "expected a number");
+    ("boolTypeErr", "(if 5 2 3)", "expected a bool");
+    ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");
   ]
 ;;
 let t_err name program expected =
@@ -146,11 +174,13 @@ let t_f test_type = (fun (name,program,expected) ->
 
 let failLet = "(let ((x  1) (y 1) (x 10)) x)"
 let failID = "x"
+let failTypes = "(add1 true)"
 
 let testFailList =
   [
    t_err "failLet" failLet "Compile error: Duplicate binding";
    t_err "failID" failID "Compile error: Unbound variable identifier x";
+   t_err "failTypes" failTypes "expected a number";
   ]
 ;;
 

@@ -82,7 +82,7 @@ let run p out =
       let (_, status) = waitpid [] ran_pid in
       match status with
         | WEXITED 0 -> Right(string_of_file rstdout_name)
-        | WEXITED n -> Left(sprintf "Error %d: %s" n (string_of_file rstdout_name))
+        | WEXITED n -> Left(sprintf "Error %d: %s" n (string_of_file rstderr_name))
         | WSIGNALED n ->
           Left(sprintf "Signalled with %d while running %s." n out)
         | WSTOPPED n ->

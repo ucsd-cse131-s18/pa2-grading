@@ -43,8 +43,8 @@ type instruction =
   | IJe of string
   | IJmp of string
   | IJno of string
-  | IJle of string
-  | IJge of string
+  | IJl of string
+  | IJg of string
   | IJo of string
 
 let count = ref 0
@@ -115,10 +115,10 @@ let i_to_asm (i : instruction) : string =
       sprintf "  jno %s" label
     | IJo(label) ->
       sprintf "  jo %s" label
-    | IJle(label) ->
-      sprintf "  jle %s" label
-    | IJge(label) ->
-      sprintf "  jge %s" label
+    | IJl(label) ->
+      sprintf "  jl %s" label
+    | IJg(label) ->
+      sprintf "  jg %s" label
     | IJmp(label) ->
       sprintf "  jmp %s" label
     | IRet ->

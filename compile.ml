@@ -135,7 +135,7 @@ and compile_prim2 op e1 e2 si env =
       let less = gen_temp "less" in
       let end_lbl = gen_temp "end" in
       [ICmp(Reg(EAX),(stackloc si));
-       IJge(less);
+       IJg(less);
        IMov(Reg(EAX), false_const);
        IJmp(end_lbl);
        ILabel(less);
@@ -145,7 +145,7 @@ and compile_prim2 op e1 e2 si env =
       let greater = gen_temp "greater" in
       let end_lbl = gen_temp "end" in
       [ICmp(Reg(EAX),(stackloc si));
-       IJle(greater);
+       IJl(greater);
        IMov(Reg(EAX), false_const);
        IJmp(end_lbl);
        ILabel(greater);
@@ -178,8 +178,8 @@ and compile_prim2 op e1 e2 si env =
       IJne(valid);
       IAnd(Reg(EAX), Const(1));
       ICmp(Reg(EAX), Const(0));
-      IJe(error_non_bool);
-      IJmp(error_non_int);
+      IJe(error_non_int);
+      IJmp(error_non_bool);
       ILabel(valid);] @
       instrs)
 

@@ -1,7 +1,8 @@
 open Sexplib.Sexp
 open Expr
 
-let reserved_words = ["let"; "add1"; "sub1"]
+let reserved_words = ["let"; "add1"; "sub1"; "isNum"; "isBool"; "if"]
+let reserved_constants = ["true"; "false"; "input";]
 let int_of_string_opt s =
   try Some(int_of_string s) with
   | _ -> None
@@ -17,6 +18,14 @@ let rec parse (sexp : Sexplib.Sexp.t) =
           let body = parse body in
           ELet(binds, body)
         | _ -> failwith "Error: invalid let syntax")
+     | "if" ->
+       (match t with
+        | ifexpr::thenexpr::elseexpr::[] ->
+          let ifexpr = parse ifexpr in
+          let thenexpr = parse thenexpr in
+          let elseexpr = parse elseexpr in
+          EIf(ifexpr, thenexpr, elseexpr)
+        | _ -> failwith "Error: invalid let syntax")
      |  "add1" ->
        (match t with
         | t::[] ->
@@ -27,6 +36,16 @@ let rec parse (sexp : Sexplib.Sexp.t) =
         | t::[] ->
           EPrim1(Sub1, (parse t))
         | _ -> failwith "Error: Too many arguments to sub1")
+     | "isNum" ->
+       (match t with
+        | v1::[] ->
+          EPrim1(IsNum, (parse v1))
+        | _ -> failwith "Error: invalid isNum syntax")
+     | "isBool" ->
+       (match t with
+        | v1::[] ->
+          EPrim1(IsBool, (parse v1))
+        | _ -> failwith "Error: invalid isNum syntax")
      |  "+" ->
        (match t with
         | v1::v2::[] ->
@@ -42,6 +61,21 @@ let rec parse (sexp : Sexplib.Sexp.t) =
         | v1::v2::[] ->
           EPrim2(Times, (parse v1), (parse v2))
         | _ -> failwith "Error: invalid * syntax")
+     | "<" ->
+       (match t with
+        | v1::v2::[] ->
+          EPrim2(Less, (parse v1), (parse v2))
+        | _ -> failwith "Error: invalid < syntax")
+     | ">" ->
+       (match t with
+        | v1::v2::[] ->
+          EPrim2(Greater, (parse v1), (parse v2))
+        | _ -> failwith "Error: invalid > syntax")
+     | "=" ->
+       (match t with
+        | v1::v2::[] ->
+          EPrim2(Equal, (parse v1), (parse v2))
+        | _ -> failwith "Error: invalid = syntax")
      | _ ->
        let s = Printf.sprintf "Error: unknown sexp %s" (to_string_hum sexp) in
        failwith s)
@@ -50,7 +84,11 @@ let rec parse (sexp : Sexplib.Sexp.t) =
      | Some n -> ENumber(n)
      | None ->
        if (not (List.mem s reserved_words)) then
-         EId(s)
+         (match s with
+         | "true" -> EBool(true)
+         | "false" -> EBool(false)
+         | "input" -> EInput
+         | _ -> EId(s))
        else
          failwith ("Invalid or unexpected id name " ^ s))
   | _ ->
@@ -60,5 +98,9 @@ let rec parse (sexp : Sexplib.Sexp.t) =
 and parse_binding binding =
   match binding with
   | List((Atom s)::t::[]) ->
-    (s,parse t)
+    if (not List.mem s reserved_words) && (not List.mem s reserved_constants)
+    then
+      (s,parse t)
+    else
+      failwith "Invalid or unexpected name " ^ s
   | _ -> failwith "Error: invalid binding structure"

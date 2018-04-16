@@ -114,8 +114,9 @@ representations for the Boa runtime:
 
 You will implement a new syntactic form — `input`, which should evaluate to a
 user-provided inputted value, which can be a number, true, or false. You need to
-parse the input value in `main.c`, and ensure input evaluates to the right thing during compilation. The input
-value should be provided as a command-line argument to the _generated executable_.
+parse the input value in `main.c`, and ensure `compile.ml` will generate code
+to fetched the value off the stack at runtime. The input value should be provided as a command-line argument
+to the _generated executable_.
 
 For example, `./somefile.run 4` makes it so `input` evaluates to 4.
 

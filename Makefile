@@ -6,9 +6,6 @@ ifeq ($(UNAME), Darwin)
   FORMAT=macho
 endif
 endif
-ifneq (,$(findstring Microsoft,$(shell cat /proc/version 2> /dev/null)))
-  OCAMLOPT=-ocamlopt "ocamlopt -no-alias-deps"
-endif
 
 PKGS=oUnit,extlib,unix,sexplib
 

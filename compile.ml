@@ -64,8 +64,6 @@ let compile_to_string prog =
   let stackjump = 0 in
   let prelude = "section .text
 extern error
-extern print
-extern input
 global our_code_starts_here
 our_code_starts_here:
   push ebp

@@ -33,7 +33,8 @@ let check_nums arg1 arg2 =
 
 let rec check (e : expr) : string list = failwith "TODO: check"
 
-let rec compile_expr (e : expr) (si : int) (env : (string * int) list) : instruction list =
+let rec compile_expr (e : expr) (si : int) (env : (string * int) list)
+  : instruction list =
   match e with
   | ELet(binds, body) ->
     let fold_fn (nenv,si,instrs) (nm,expr) =
@@ -50,7 +51,31 @@ let rec compile_expr (e : expr) (si : int) (env : (string * int) list) : instruc
     prelude @ postlude
   | EPrim1(op, e) -> compile_prim1 op e si env
   | EPrim2(op, e1, e2) -> compile_prim2 op e1 e2 si env
+  | EIf(ifexpr,thenexpr,elseexpr) ->
+    let test_bool =
+      [ IMov(stackloc si, Reg(EAX));
+        IAnd(Reg(EAX), Const(1));
+        ICmp(Reg(EAX), Const(0));
+        IJne(error_non_bool);
+        IMov(Reg(EAX), stackloc si);] in
+    let ifexpr = compile_expr ifexpr si env in
+    let thenexpr = compile_expr thenexpr si env in
+    let elseexpr = compile_expr elseexpr si env in
+    let else_lbl = gen_temp "else" in
+    let end_lbl = gen_temp "end_if" in
+    ifexpr @
+    test_bool @
+    [ ICmp(Reg(EAX), true_const);
+      IJne(else_lbl);] @
+    thenexpr @
+    [ IJmp(end_lbl);
+      ILabel(else_lbl);] @
+    elseexpr @
+    [ILabel(end_lbl)]
   | ENumber(n) -> [IMov(Reg(EAX),Const((n * 2) lor 1))]
+  | EBool(b) ->
+    let b = if b then true_const else false_const in
+    [IMov(Reg(EAX),b)]
   | EInput -> [IMov(Reg(EAX), stackloc (-1))]
   | EId(nm) ->
     match find env nm with
@@ -61,10 +86,29 @@ let rec compile_expr (e : expr) (si : int) (env : (string * int) list) : instruc
 
 and compile_prim1 op e si env =
   let prelude = compile_expr e si env in
-  let instr = match op with
-    | Add1 -> IAdd(Reg(EAX),Const(2))
-    | Sub1 -> ISub(Reg(EAX),Const(2)) in
-  prelude @ [instr]
+  let instrs = match op with
+    | Add1 ->
+      IMov(stackloc si, Reg(EAX))::
+      check_num @
+      [IMov(Reg(EAX), stackloc si);
+       IAdd(Reg(EAX),Const(2));
+       check_overflow]
+    | Sub1 ->
+      IMov(stackloc si, Reg(EAX))::
+      check_num @
+      [IMov(Reg(EAX), stackloc si);
+       ISub(Reg(EAX),Const(2));
+       check_overflow]
+    | IsNum ->
+      [IAnd(Reg(EAX), Const(1));
+       IShl(Reg(EAX), Const(31));
+       IOr(Reg(EAX), false_const);]
+    | IsBool ->
+      [IXor(Reg(EAX), Const(1));
+       IShl(Reg(EAX), Const(31));
+       IOr(Reg(EAX), false_const);]
+  in
+  prelude @ instrs
 
 and compile_prim2 op e1 e2 si env =
   let first_op = compile_expr e1 si env in

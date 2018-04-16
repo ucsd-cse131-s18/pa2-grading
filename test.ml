@@ -30,6 +30,12 @@ let quickBrownFox = "(let ((x (add1 (+ (* (- (* (sub1 55) (add1 17)) 33) " ^
 let plusOne = "(let ((x 1) (y (add1 x)) (z (add1 y))) z)"
 let plusOneScope = "(let ((x 1)) (let ((y (add1 x))) (let ((z (add1 y))) z)))"
 let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
+let ifTest = "(if true 5 6)"
+let ifTestLet = "(let ((x 5)) (if (= x 7) 7 8))"
+let boolTest = "true"
+let isBoolTest = "(isBool false)"
+let isBoolTestF = "(isBool 5)"
+let isNumTest = "(isNum 5)"
 
 let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
 
@@ -107,7 +113,7 @@ let autograde_tests =
     ("plusOne", plusOne, "3");
     ("plusOneScope", plusOneScope, "3");
     ("harmonic", harmonic, "-1");
-    ("input", (f_to_s "input.ana"), "false");
+    ("input_t", (f_to_s "input.ana"), "false");
   ]
 ;;
 
@@ -158,6 +164,11 @@ let suite =
    t "nested_arith" nested_arith "0";
    t "let_nested" let_nested "1225";
    t "complexExpression" complexExpression "6";
+   t "if_Test" ifTest "5";
+   t "ifTestLet" ifTestLet "8";
+   t "isBoolTest" isBoolTest "true";
+   t "isBoolTestF" isBoolTestF "false";
+   t "isNumTest" isNumTest "true";
   ] @ testFailList
   @ (List.map (t_f t_parse) autograde_parse_tests)
   @ (List.map (t_f t) autograde_tests)

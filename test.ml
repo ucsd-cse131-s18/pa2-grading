@@ -7,6 +7,23 @@ open Expr
 let is_osx = Conf.make_bool "osx" false "Set this flag to run on osx";;
 let t name program expected = name>::test_run program name expected;;
 
+let t_err name program expected =
+  name>::test_err program name expected
+
+let t_parse name program expected =
+  name>::(fun _ -> assert_equal expected (Runner.parse_string program));;
+
+let t_input name program input expected =
+  name>::test_run_input program name input expected
+
+let t_input_err name program input errmsg =
+  name>::test_err_input program name input errmsg
+
+let t_f test_type = (fun (name,program,expected) ->
+  test_type name program expected)
+
+let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
+
 let forty_one = "(sub1 42)";;
 let forty = "(sub1 (sub1 42))";;
 let add1 = "(add1 (add1 (add1 3)))";;
@@ -28,6 +45,7 @@ let isBoolTest = "(isBool false)"
 let isBoolTestF = "(isBool 5)"
 let isNumTest = "(isNum 5)"
 
+(* Autograder test program string *)
 let complexExpressionParens = "(let ((x 10) (y  5) (z 3)) (let (t 2) " ^
                               "(add1 (+ x (+ y (* (- t z) x))))))"
 let deeparith = "(+ (* (- (* (+ 1 2) (* 2 4)) (+ -5 4)) (+ (* 12 3) 8)) 17)"
@@ -40,8 +58,6 @@ let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
 let complex_if = "(let ((x 6) (y (add1 x))) (if (> (+ 5 7) (* x y)) x y))"
 let equality_check = "(= -1 -1)"
 let nequality_check = "(= 5 6)"
-
-let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
 
 let forty_one_p = EPrim1(Sub1, ENumber(42));;
 let forty_p = EPrim1(Sub1, EPrim1(Sub1, ENumber(42)));;
@@ -82,8 +98,6 @@ let quickBrownFox_p = ELet([("x", EPrim1(Add1, EPrim2(Plus, EPrim2(Times,
                       EPrim1(Sub1, ENumber(-3))), EPrim2(Times, ENumber(-1),
                       ENumber(3))))); ("y", EPrim1(Sub1, EPrim2(Plus,
                       ENumber(-17), EId("x"))))], EId("y"));;
-let t_parse name program expected =
-  name>::(fun _ -> assert_equal expected (Runner.parse_string program));;
 
 let autograde_parse_tests =
   [
@@ -103,7 +117,6 @@ let autograde_parse_tests =
     ("lotOfLet parse", lotOfLet, lotOfLet_p);
     ("quickBrownFox parse", quickBrownFox, quickBrownFox_p);
   ]
-;;
 
 let autograde_tests =
   [
@@ -127,7 +140,6 @@ let autograde_tests =
     ("boolEvalonlyif", "(if (= 5 5) 2 (+ true false))", "2");
     ("boolEvalonlyelse", "(if (< 5 5) (+ true false) 3)", "3");
   ]
-;;
 
 let autograde_fail_tests =
   [
@@ -165,12 +177,6 @@ let autograde_fail_tests =
     ("boolTypeErr", "(if 5 2 3)", "expected a bool");
     ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");
   ]
-;;
-let t_err name program expected =
-  name>::test_err program name expected
-
-let t_f test_type = (fun (name,program,expected) ->
-  test_type name program expected)
 
 let failLet = "(let ((x  1) (y 1) (x 10)) x)"
 let failID = "x"
@@ -181,8 +187,9 @@ let testFailList =
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
    t_err "failID" failID "Compile error: Variable identifier x unbounded";
    t_err "failTypes" failTypes "expected a number";
+   t_input_err "failInput" "input" "0r" "input must be a boolean or a number";
+   t_input_err "failInputType" "(add1 input)" "true" "expected a number";
   ]
-;;
 
 let suite =
   "suite">:::
@@ -207,12 +214,11 @@ let suite =
    t "isBoolTest" isBoolTest "true";
    t "isBoolTestF" isBoolTestF "false";
    t "isNumTest" isNumTest "true";
+   t_input "inputTest" "(add1 input)" "5" "6";
   ] @ testFailList
   @ (List.map (t_f t_parse) autograde_parse_tests)
   @ (List.map (t_f t) autograde_tests)
   @ (List.map (t_f t_err) autograde_fail_tests)
-;;
-
 
 let () =
   run_test_tt_main suite

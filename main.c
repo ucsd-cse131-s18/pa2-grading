@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #define TRUE 0xFFFFFFFE
 #define FALSE 0x7FFFFFFE
 
@@ -35,14 +36,17 @@ void error(int error_code) {
 int main(int argc, char** argv) {
   int input_val = FALSE;
   // Fill in your code below
-  //input_val = FALSE;
+  char * endptr;
+  extern int errno;
+
   if (argc > 1) {
     if (!strcmp("true", argv[1])) {
       input_val = TRUE;
     } else if (!strcmp("false", argv[1])) {
       input_val = FALSE;
-    } else if (sscanf(argv[1], "%d", &input_val) > 0) {
-      input_val = input_val << 1 | 1;
+    } else if (((input_val = strtol(argv[1], &endptr, 0)) || 1) &&
+        !(*endptr) && !errno) {
+      input_val = (input_val << 1) | 1;
     } else {
       error(4);
     }

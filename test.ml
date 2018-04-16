@@ -113,7 +113,7 @@ let autograde_tests =
 
 let autograde_fail_tests =
   [
-    ("parse_let", "(let ((let 5)) let)", "Invalid or unexpected id name let");
+    ("parse_let", "(let ((let 5)) let)", "Invalid or unexpected name let");
     ("complexExpressionParens parse", complexExpressionParens,
       "Error: invalid binding structure");
     ("let syntax", "(let ((x 1)) x x)", "Error: invalid let syntax");

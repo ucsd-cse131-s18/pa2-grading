@@ -107,12 +107,13 @@ let autograde_tests =
     ("plusOne", plusOne, "3");
     ("plusOneScope", plusOneScope, "3");
     ("harmonic", harmonic, "-1");
+    ("input", (f_to_s "input.ana"), "false");
   ]
 ;;
 
 let autograde_fail_tests =
   [
-    ("parse_let", "(let ((let 5)) let)", "Invalid or unexpected name let");
+    ("parse_let", "(let ((let 5)) let)", "Invalid or unexpected id name let");
     ("complexExpressionParens parse", complexExpressionParens,
       "Error: invalid binding structure");
     ("let syntax", "(let ((x 1)) x x)", "Error: invalid let syntax");

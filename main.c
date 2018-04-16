@@ -4,16 +4,13 @@
 #define TRUE 0xFFFFFFFE
 #define FALSE 0x7FFFFFFE
 
-extern int our_code_starts_here() asm("our_code_starts_here");
-extern int print(int val) asm("print");
+extern int our_code_starts_here(int input_val) asm("our_code_starts_here");
 extern void error(int val) asm("error");
-extern int input() asm("input");
-int input_val;
 
 int print(int val) {
-  if (val == 0xFFFFFFFE) {
+  if (val == TRUE) {
     printf("true\n");
-  } else if (val == 0x7FFFFFFE) {
+  } else if (val == FALSE) {
     printf("false\n");
   } else if ((val & 1) == 1) {
     printf("%d\n", val>>1);
@@ -37,10 +34,12 @@ void error(int error_code) {
 
 int main(int argc, char** argv) {
   int input_val = FALSE;
+  // Fill in your code below
+  //input_val = FALSE;
   if (argc > 1) {
-    if (strcmp("true", argv[1])) {
+    if (!strcmp("true", argv[1])) {
       input_val = TRUE;
-    } else if (strcmp("false", argv[1])) {
+    } else if (!strcmp("false", argv[1])) {
       input_val = FALSE;
     } else if (sscanf(argv[1], "%d", &input_val) > 0) {
       input_val = input_val << 1 | 1;
@@ -48,7 +47,7 @@ int main(int argc, char** argv) {
       error(4);
     }
   }
-  int result = our_code_starts_here();
+  int result = our_code_starts_here(input_val);
   print(result);
   return 0;
 }

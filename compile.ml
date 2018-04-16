@@ -51,6 +51,7 @@ let rec compile_expr (e : expr) (si : int) (env : (string * int) list) : instruc
   | EPrim1(op, e) -> compile_prim1 op e si env
   | EPrim2(op, e1, e2) -> compile_prim2 op e1 e2 si env
   | ENumber(n) -> [IMov(Reg(EAX),Const((n * 2) lor 1))]
+  | EInput -> [IMov(Reg(EAX), stackloc (-1))]
   | EId(nm) ->
     match find env nm with
     | Some(sloc) -> [IMov(Reg(EAX),(stackloc sloc))]
@@ -139,25 +140,15 @@ and compile_prim2 op e1 e2 si env =
       instrs)
 
 let compile_to_string prog =
-  (*let static_errors = check prog in*)
-  let stackjump = 0 in
-  let prelude =
-    "  section .text\n" ^
-    "  extern error\n" ^
-    "  global our_code_starts_here\n" ^
-    "our_code_starts_here:\n" ^
-    "  push ebp\n" ^
-    "  mov ebp, esp\n" ^
-    "  sub esp, " ^ (string_of_int stackjump) in
-  let postlude = [
-    IMov(Reg(ESP), Reg(EBP));
-    IPop(Reg(EBP));
-    IRet;
-    ILabel("overflow_check")
-  ]
-    @ (throw_err 3)
-    @ [ILabel(error_non_int)] @ (throw_err 1)
-    @ [ILabel(error_non_bool)] @ (throw_err 2) in
+(*let static_errors = check prog in*)
+  let prelude = "section .text
+extern error
+global our_code_starts_here
+our_code_starts_here:\n" in
+  let postlude = [IRet]
+  @ [ILabel("overflow_check")] @ (throw_err 3)
+  @ [ILabel(error_non_int)] @ (throw_err 1)
+  @ [ILabel(error_non_bool)] @ (throw_err 2) in
   let compiled = (compile_expr prog 1 []) in
   let as_assembly_string = (to_asm (compiled @ postlude)) in
   sprintf "%s%s\n" prelude as_assembly_string

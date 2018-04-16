@@ -3,7 +3,6 @@ type prim1 =
   | Sub1
   | IsNum
   | IsBool
-  | Print
 
 type prim2 =
   | Plus

@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define TRUE 0xFFFFFFFE
 #define FALSE 0x7FFFFFFE
 
 extern int our_code_starts_here() asm("our_code_starts_here");
 extern int print(int val) asm("print");
-extern void error(int val) asm('error');
-extern int input() asm('input');
+extern void error(int val) asm("error");
+extern int input() asm("input");
 int input_val;
 
 int print(int val) {
@@ -23,11 +24,12 @@ int print(int val) {
 }
 
 void error(int error_code) {
-  fprintf(stderr, "TODO: main.c error");
-  if(error_code == 0)
-    fprintf(stderr, "TODO: main.c error");
-  else if(error_code == 1)
-    fprintf(stderr, "TODO: main.c error");
+  if(error_code == 1)
+    fprintf(stderr, "error: expected an int\n");
+  else if(error_code == 2)
+    fprintf(stderr, "error: expected a boolean\n");
+  else
+    fprintf(stderr, "error: overflow of arithmetic operation\n");
 
   exit(123456);
 }

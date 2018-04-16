@@ -85,10 +85,10 @@ let rec parse (sexp : Sexplib.Sexp.t) =
      | None ->
        if (not (List.mem s reserved_words)) then
          (match s with
-         | "true" -> EBool(true)
-         | "false" -> EBool(false)
-         | "input" -> EInput
-         | _ -> EId(s))
+          | "true" -> EBool(true)
+          | "false" -> EBool(false)
+          | "input" -> EInput
+          | _ -> EId(s))
        else
          failwith ("Invalid or unexpected id name " ^ s))
   | _ ->
@@ -98,9 +98,10 @@ let rec parse (sexp : Sexplib.Sexp.t) =
 and parse_binding binding =
   match binding with
   | List((Atom s)::t::[]) ->
-    if (not List.mem s reserved_words) && (not List.mem s reserved_constants)
+    if (not (List.mem s reserved_words)) &&
+       (not (List.mem s reserved_constants))
     then
       (s,parse t)
     else
-      failwith "Invalid or unexpected name " ^ s
+      failwith ("Invalid or unexpected name " ^ s)
   | _ -> failwith "Error: invalid binding structure"

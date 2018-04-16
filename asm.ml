@@ -42,7 +42,10 @@ type instruction =
   | IJe of string
   | IJmp of string
   | IJno of string
+  | IJle of string
+  | IJge of string
   | IJo of string
+
 let count = ref 0
 let gen_temp base =
   count := !count + 1;
@@ -63,7 +66,7 @@ let s_to_asm (s : size) : string =
 let rec arg_to_asm (a : arg) : string =
   match a with
     | Const(n) -> sprintf "%d" n
-    | HexConst(n) -> sprintf "%x" n
+    | HexConst(n) -> sprintf "%#x" n
     | Reg(r) -> r_to_asm r
     | RegOffset(n, r) ->
       if n >= 0 then sprintf "[%s + %d]" (r_to_asm r) n
@@ -109,6 +112,10 @@ let i_to_asm (i : instruction) : string =
       sprintf "  jno %s" label
     | IJo(label) ->
       sprintf "  jo %s" label
+    | IJle(label) ->
+      sprintf "  jle %s" label
+    | IJge(label) ->
+      sprintf "  jge %s" label
     | IJmp(label) ->
       sprintf "  jmp %s" label
     | IRet ->

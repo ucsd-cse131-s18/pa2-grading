@@ -132,24 +132,24 @@ and compile_prim2 op e1 e2 si env =
        check_overflow;
        IAdd(Reg(EAX), Const(1));],true
     | Less ->
-      let not_less = gen_temp "not_less" in
+      let less = gen_temp "less" in
       let end_lbl = gen_temp "end" in
       [ICmp(Reg(EAX),(stackloc si));
-       IJge(not_less);
-       IMov(Reg(EAX), true_const);
-       IJmp(end_lbl);
-       ILabel(not_less);
+       IJge(less);
        IMov(Reg(EAX), false_const);
+       IJmp(end_lbl);
+       ILabel(less);
+       IMov(Reg(EAX), true_const);
        ILabel(end_lbl);],true
     | Greater ->
-      let not_greater = gen_temp "not_greater" in
+      let greater = gen_temp "greater" in
       let end_lbl = gen_temp "end" in
       [ICmp(Reg(EAX),(stackloc si));
-       IJle(not_greater);
-       IMov(Reg(EAX), true_const);
-       IJmp(end_lbl);
-       ILabel(not_greater);
+       IJle(greater);
        IMov(Reg(EAX), false_const);
+       IJmp(end_lbl);
+       ILabel(greater);
+       IMov(Reg(EAX), true_const);
        ILabel(end_lbl);],true
     | Equal ->
       let not_equal = gen_temp "not_equal" in
@@ -185,10 +185,10 @@ and compile_prim2 op e1 e2 si env =
 
 let compile_to_string prog =
 (*let static_errors = check prog in*)
-  let prelude = "section .text
-extern error
-global our_code_starts_here
-our_code_starts_here:\n" in
+  let prelude = "  section .text\n" ^
+                "  extern error\n" ^
+                "  global our_code_starts_here\n" ^
+"our_code_starts_here:\n" in
   let postlude = [IRet]
   @ [ILabel("overflow_check")] @ (throw_err 3)
   @ [ILabel(error_non_int)] @ (throw_err 1)

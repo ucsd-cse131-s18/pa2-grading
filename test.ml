@@ -21,6 +21,13 @@ let nested_arith = "(- (* (- 54 3) 2) 102)";;
 let let_nested = "(let ((x (+ 5 (+ 10 20)))) (* x x))"
 let complexExpression = "(let ((x 10) (y 5) (z 3)) (let ((t 2)) " ^
                         "(add1 (+ x (+ y (* (- t z) x))))))"
+let ifTest = "(if true 5 6)"
+let ifTestLet = "(let ((x 5)) (if (= x 7) 7 8))"
+let boolTest = "true"
+let isBoolTest = "(isBool false)"
+let isBoolTestF = "(isBool 5)"
+let isNumTest = "(isNum 5)"
+
 let complexExpressionParens = "(let ((x 10) (y  5) (z 3)) (let (t 2) " ^
                               "(add1 (+ x (+ y (* (- t z) x))))))"
 let deeparith = "(+ (* (- (* (+ 1 2) (* 2 4)) (+ -5 4)) (+ (* 12 3) 8)) 17)"
@@ -30,12 +37,9 @@ let quickBrownFox = "(let ((x (add1 (+ (* (- (* (sub1 55) (add1 17)) 33) " ^
 let plusOne = "(let ((x 1) (y (add1 x)) (z (add1 y))) z)"
 let plusOneScope = "(let ((x 1)) (let ((y (add1 x))) (let ((z (add1 y))) z)))"
 let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
-let ifTest = "(if true 5 6)"
-let ifTestLet = "(let ((x 5)) (if (= x 7) 7 8))"
-let boolTest = "true"
-let isBoolTest = "(isBool false)"
-let isBoolTestF = "(isBool 5)"
-let isNumTest = "(isNum 5)"
+let complex_if = "(let ((x 6) (y (add1 x))) (if (> (+ 5 7) (* x y)) x y))"
+let equality_check = "(= -1 -1)"
+let nequality_check = "(= 5 6)"
 
 let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
 
@@ -114,6 +118,9 @@ let autograde_tests =
     ("plusOneScope", plusOneScope, "3");
     ("harmonic", harmonic, "-1");
     ("input_t", (f_to_s "input.ana"), "false");
+    ("complex_if", complex_if, "7");
+    ("equality_check", equality_check, "true");
+    ("nequality_check", nequality_check, "false");
   ]
 ;;
 
@@ -164,6 +171,7 @@ let suite =
    t "nested_arith" nested_arith "0";
    t "let_nested" let_nested "1225";
    t "complexExpression" complexExpression "6";
+   t "boolTest" boolTest "true";
    t "if_Test" ifTest "5";
    t "ifTestLet" ifTestLet "8";
    t "isBoolTest" isBoolTest "true";

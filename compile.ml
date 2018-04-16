@@ -31,7 +31,46 @@ let check_nums arg1 arg2 =
    ICmp(arg1, Const(1));
    IJne(error_non_int);]
 
-let rec check (e : expr) : string list = failwith "TODO: check"
+let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
+  match e with
+    | ENumber(_)
+    | EBool(_) -> []
+    | EId(x) ->
+      begin match find env x with
+        | None -> ["Variable identifier "^ x ^ " unbounded "]
+        | Some(_) -> []
+      end
+    | EPrim1(op, e) ->
+        well_formed_e e env
+    | EPrim2(op, left, right) ->
+        (well_formed_e left env)@(well_formed_e right env)
+    | EIf(cond, thn, els) ->
+        (well_formed_e cond env)@(well_formed_e thn env)@(well_formed_e els env)
+    | ELet(binds, body) ->
+        (* Assume the parser will never give an empty binding list *)
+        begin
+            match binds with 
+            | [] -> failwith (sprintf "A let expression must contain one or more bindings, (this shouldn't be happening) ")
+            | _  -> 
+                let rec extBinds rbs nameAcc errAcc envAcc = 
+                begin
+                    match rbs with
+                    | [] -> (errAcc, envAcc)
+                    | (name, value)::t ->
+                            if List.mem name nameAcc then 
+                                extBinds t nameAcc (errAcc@["Multiple bindings for variable identifier " ^ name]@
+                                                            (well_formed_e value env)) envAcc
+                            else 
+                                extBinds t (name::nameAcc) (errAcc@(well_formed_e value envAcc)) ((name,0)::envAcc)
+                end
+                in let (errAcc', envAcc') = (extBinds binds [] [] env)
+                in errAcc'@(well_formed_e body envAcc')
+        end
+    | EInput -> []
+let check (e : expr) : string list =
+  match well_formed_e e [] with
+    | [] -> []
+    | errs -> failwith (String.concat "\n" errs)
 
 let rec compile_expr (e : expr) (si : int) (env : (string * int) list)
   : instruction list =
@@ -184,7 +223,7 @@ and compile_prim2 op e1 e2 si env =
       instrs)
 
 let compile_to_string prog =
-(*let static_errors = check prog in*)
+  let _ = check prog in
   let prelude = "section .text
 extern error
 global our_code_starts_here

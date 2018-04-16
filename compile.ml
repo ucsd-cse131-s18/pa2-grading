@@ -141,15 +141,13 @@ let compile_to_string prog =
   (*let static_errors = check prog in*)
   let stackjump = 0 in
   let prelude =
-    "section .text\n" ^
-    "extern error\n" ^
-    "extern print\n" ^
-    "extern input\n" ^
-    "global our_code_starts_here\n" ^
+    "  section .text\n" ^
+    "  extern error\n" ^
+    "  global our_code_starts_here\n" ^
     "our_code_starts_here:\n" ^
-    "push ebp\n" ^
-    "mov ebp, esp\n" ^
-    "sub esp, " ^ (string_of_int stackjump) ^ "\n" in
+    "  push ebp\n" ^
+    "  mov ebp, esp\n" ^
+    "  sub esp, " ^ (string_of_int stackjump) ^ "\n" in
   let postlude = [
     IMov(Reg(ESP), Reg(EBP));
     IPop(Reg(EBP));

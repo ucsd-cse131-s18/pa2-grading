@@ -25,35 +25,29 @@ int print(int val) {
 
 void error(int error_code) {
   if(error_code == 1)
-    fprintf(stderr, "error: expected an int\n");
-  else if(error_code == 2)
-    fprintf(stderr, "error: expected a boolean\n");
-  else
-    fprintf(stderr, "error: overflow of arithmetic operation\n");
-
+    fprintf(stderr, "Error: expected a number\n");
+  else if (error_code == 2)
+    fprintf(stderr, "Error: expected a boolean\n");
+  else if (error_code == 3)
+    fprintf(stderr, "Error: overflow\n");
+  else if (error_code == 4)
+    fprintf(stderr, "Error: input must be a boolean or a number\n");
   exit(123456);
 }
 
-int input() {
-    return input_val;
-}
-
-int parse_input(char* input) {
-  int val;
-  if (strcmp("true", input)) {
-    val = TRUE;
-  } else if (strcmp("false", input)) {
-    val = FALSE;
-  } else if (sscanf(input, "%d", &val) > 0) {
-    val = val << 1 | 1;
-  } else {
-    val = FALSE;
-  }
-  return val;
-}
-
 int main(int argc, char** argv) {
-  input_val = argc > 1 ? parse_input(argv[1]) : FALSE;
+  int input_val = FALSE;
+  if (argc > 1) {
+    if (strcmp("true", argv[1])) {
+      input_val = TRUE;
+    } else if (strcmp("false", argv[1])) {
+      input_val = FALSE;
+    } else if (sscanf(argv[1], "%d", &input_val) > 0) {
+      input_val = input_val << 1 | 1;
+    } else {
+      error(4);
+    }
+  }
   int result = our_code_starts_here();
   print(result);
   return 0;

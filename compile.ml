@@ -31,7 +31,48 @@ let check_nums arg1 arg2 =
    ICmp(arg1, Const(1));
    IJne(error_non_int);]
 
-let rec check (e : expr) : string list = failwith "TODO: check"
+let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
+  match e with
+  | ENumber(_)
+  | EBool(_) -> []
+  | EId(x) ->
+    begin match find env x with
+    | None -> ["Variable identifier "^ x ^ " unbounded "]
+    | Some(_) -> []
+    end
+  | EPrim1(_, e) ->
+    well_formed_e e env
+  | EPrim2(_, left, right) ->
+    (well_formed_e left env)@(well_formed_e right env)
+  | EIf(cond, thn, els) ->
+    (well_formed_e cond env)@(well_formed_e thn env)@(well_formed_e els env)
+  | EInput -> []
+  | ELet(binds, body) ->
+    (* Assume the parser will never give an empty binding list *)
+      match binds with
+      | [] ->
+        failwith ("A let expression must contain one or more bindings, " ^
+                  "(this shouldn't be happening)")
+      | _  ->
+        let rec extBinds rbs nameAcc errAcc envAcc =
+          (match rbs with
+           | [] -> (errAcc, envAcc)
+           | (name, value)::t ->
+             if List.mem name nameAcc then
+               extBinds t nameAcc
+                 (errAcc@["Multiple bindings for variable identifier " ^ name]@
+                  (well_formed_e value env)) envAcc
+             else
+               extBinds t (name::nameAcc)
+                 (errAcc@(well_formed_e value envAcc)) ((name,0)::envAcc))
+        in
+        let (errAcc', envAcc') = (extBinds binds [] [] env) in
+        errAcc'@(well_formed_e body envAcc')
+
+let check (e : expr) : string list =
+  match well_formed_e e [] with
+  | [] -> []
+  | errs -> failwith (String.concat "\n" errs)
 
 let rec compile_expr (e : expr) (si : int) (env : (string * int) list)
   : instruction list =
@@ -165,7 +206,7 @@ and compile_prim2 op e1 e2 si env =
     first_op @ [IMov((stackloc si),Reg(EAX))] @ second_op @
     (IMov(stackloc (si + 1), Reg(EAX))::
      (check_nums (Reg(EAX)) (stackloc si))) @
-     (IMov(Reg(EAX), stackloc(si + 1))::instrs)
+    (IMov(Reg(EAX), stackloc(si + 1))::instrs)
   else
     let valid = gen_temp "valid_eq" in
     first_op @ [IMov((stackloc si),Reg(EAX))] @ second_op @
@@ -181,18 +222,18 @@ and compile_prim2 op e1 e2 si env =
       IJe(error_non_int);
       IJmp(error_non_bool);
       ILabel(valid);] @
-      instrs)
+     instrs)
 
 let compile_to_string prog =
-(*let static_errors = check prog in*)
+  let _ = check prog in
   let prelude = "  section .text\n" ^
                 "  extern error\n" ^
                 "  global our_code_starts_here\n" ^
-"our_code_starts_here:\n" in
+                "our_code_starts_here:\n" in
   let postlude = [IRet]
-  @ [ILabel("overflow_check")] @ (throw_err 3)
-  @ [ILabel(error_non_int)] @ (throw_err 1)
-  @ [ILabel(error_non_bool)] @ (throw_err 2) in
+                 @ [ILabel("overflow_check")] @ (throw_err 3)
+                 @ [ILabel(error_non_int)] @ (throw_err 1)
+                 @ [ILabel(error_non_bool)] @ (throw_err 2) in
   let compiled = (compile_expr prog 1 []) in
   let as_assembly_string = (to_asm (compiled @ postlude)) in
   sprintf "%s%s\n" prelude as_assembly_string

@@ -3,7 +3,6 @@ open Printf
 type reg =
   | EAX
   | ESP
-  | EBP
 
 type size =
   | DWORD_PTR
@@ -56,7 +55,6 @@ let r_to_asm (r : reg) : string =
   match r with
     | EAX -> "eax"
     | ESP -> "esp"
-    | EBP -> "ebp"
 
 let s_to_asm (s : size) : string =
   match s with
@@ -108,19 +106,19 @@ let i_to_asm (i : instruction) : string =
     | ILabel(name) ->
       name ^ ":"
     | IJne(label) ->
-      sprintf "  jne %s" label
+      sprintf "  jne near %s" label
     | IJe(label) ->
-      sprintf "  je %s" label
+      sprintf "  je near %s" label
     | IJno(label) ->
-      sprintf "  jno %s" label
+      sprintf "  jno near %s" label
     | IJo(label) ->
-      sprintf "  jo %s" label
+      sprintf "  jo near %s" label
     | IJl(label) ->
-      sprintf "  jl %s" label
+      sprintf "  jl near %s" label
     | IJg(label) ->
-      sprintf "  jg %s" label
+      sprintf "  jg near %s" label
     | IJmp(label) ->
-      sprintf "  jmp %s" label
+      sprintf "  jmp near %s" label
     | IRet ->
       "  ret"
 

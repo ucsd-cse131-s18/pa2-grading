@@ -178,8 +178,8 @@ let failTypes = "(add1 true)"
 
 let testFailList =
   [
-   t_err "failLet" failLet "Compile error: Duplicate binding";
-   t_err "failID" failID "Compile error: Unbound variable identifier x";
+   t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
+   t_err "failID" failID "Compile error: Variable identifier x unbounded";
    t_err "failTypes" failTypes "expected a number";
   ]
 ;;

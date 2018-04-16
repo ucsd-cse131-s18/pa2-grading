@@ -93,11 +93,12 @@ type expr =
 
 ### Semantics
 
-There are three main changes that ripple through the implementation:
+There are four main changes that ripple through the implementation:
 
 - The representation of values
 - The addition of if/else conditionals
 - Checking for errors
+- Optional command-line input
 
 ### Representation of Values
 
@@ -111,12 +112,15 @@ representations for the Boa runtime:
 
 ## Handling Input Value
 
-You will implement a new syntactic form -- (input) -- which should evaluate to a
+You will implement a new syntactic form — `input`, which should evaluate to a
 user-provided inputted value, which can be a number, true, or false. You need to
-parse the input value and ensure input evaluates to the right thing. The input
-value should be provided as a command-line argument to the _generated executable_.
-For example, ./somefile.run 4 makes it so (input) evaluates to 4.
-If an argument isn't provided, the value of (input) should be false.
+parse the input value in `main.c`, and ensure `compile.ml` will generate code
+to fetched the value off the stack at runtime. The input value should be provided as a command-line argument
+to the _generated executable_.
+
+For example, `./somefile.run 4` makes it so `input` evaluates to 4.
+
+If an argument isn't provided to the executable, the default value of `input` should be `FALSE`.
 
 ### Checking for Errors
 

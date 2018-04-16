@@ -37,12 +37,12 @@ The concrete syntax of Boa is:
   | <number>
   | true
   | false
+  | input
   | (add1 <expr>)
   | (sub1 <expr>)
   | (isnum <expr>)
   | (isbool <expr>)
   | (print <expr>)
-  | (input)
   | (+ <expr> <expr>)
   | (- <expr> <expr>)
   | (* <expr> <expr>)

@@ -19,6 +19,7 @@ main: main.ml compile.ml runner.ml parser.ml
 	mv main.native main
 
 test: compile.ml runner.ml test.ml parser.ml
+	mkdir -p output
 	$(BUILD) test.native
 	mv test.native test
 

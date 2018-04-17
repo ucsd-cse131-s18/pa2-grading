@@ -347,9 +347,13 @@ variables with the same name, duplicates within a list, etc.
 - `IJo`, `IJno`: Jump to the provided label if the last arithmetic operation
   did/did not overflow
 
+- `near`: Perform a near jump rather than the default short jump. The default short
+  jump is too close to be useful during compilation. We have already
+  filled out jump instructions so you don't need to worry about 
+  "short jump our of range" error. 
+
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
-
 
 ### Testing Functions
 

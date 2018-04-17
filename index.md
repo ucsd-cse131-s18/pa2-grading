@@ -365,7 +365,8 @@ guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 ### Testing Functions
 
 These are the same as they were for Anaconda.  Your tests should
-focus on `t` tests.
+focus on `t` tests. In addition, to test command-line argument, 
+you can call `t_i`.
 
 An old friend is helpful here, too: `valgrind`.  You can run `valgrind
 output/some_test.run` in order to get a little more feedback on tests that

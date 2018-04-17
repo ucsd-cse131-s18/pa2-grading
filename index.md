@@ -116,6 +116,7 @@ user-provided inputted value, which can be an integer number, true, or false.
 You need to parse the input value in `main.c` and check for two parsing errors at runtime:
 1. input must be a boolean or a number
 2. input is not a representable number
+
 If an argument isn't provided to the executable, the default value of `input` should be `false`.
 After the input value is parsed, it will be passed to `our_code_starts_from_here` as a function
 argument that will get stored on its stack frame. To make `input` variable accessible, we add

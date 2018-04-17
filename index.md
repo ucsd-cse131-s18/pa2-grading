@@ -1,3 +1,8 @@
+---
+layout: page
+title: "PA2 – Bitwise Offset Arrangement"
+---
+
 # PA2 Boa, Due Wednesday 4/25/2018 (Open Collaboration)
 
 ![A boa](https://animalcorner.co.uk/wp-content/uploads/2015/02/boa-constrictor-1.jpg)
@@ -48,7 +53,6 @@ The concrete syntax of Boa is:
   | (< <expr> <expr>)
   | (> <expr> <expr>)
   | (== <expr> <expr>)
-  | ( <expr> )
 
 <bindings> :=
   | (<identifier> <expr>)
@@ -95,9 +99,9 @@ type expr =
 There are four main changes that ripple through the implementation:
 
 - The representation of values
+- Optional command-line input
 - The addition of if/else conditionals
 - Checking for errors
-- Optional command-line input
 
 ### Representation of Values
 
@@ -151,7 +155,7 @@ should still continue to find any other errors.
 
 #### Error handling with assembly
 
-We will be also asking you to handling errors in the compilation of the program. The only
+We will be also asking you to handling errors during the runtime of the program. The only
 errors you will need to check here are:
 
 - `-`, `+`, `*`, `<`, and `>` should raise an error (by printing it out) with
@@ -201,11 +205,6 @@ If you look closely you may notice that we aren't updating ESP for our local var
 
 #### Conditional Constructs
 
-- `IMul of arg * arg` — Multiply the left argument by the right argument, and
-  store in the left argument (typically the left argument is `eax` for us)
-
-  Example: `mul eax, 4`
-
 - `ILabel of string` — Create a location in the code that can be jumped to
   with `jmp`, `jne`, and other jump commands
 
@@ -233,6 +232,17 @@ If you look closely you may notice that we aren't updating ESP for our local var
   given label (by changing the program counter)
 
   Example: `jmp always_go_here`
+
+- `Ijl of string` - Jump if the last comparison said the first value was less
+  than the second. Otherwise do nothing.
+
+- `Ijg of string` - Jump if the last comparison said the first value was greater
+  than the second. Otherwise do nothing.
+
+- `IJo of string` - Jump if the last operation set the overflow condition code,
+  otherwise do nothing.
+
+- `IJno of string` - As above, but only jump when the condition code is not set.
 
 #### Combining `cmp` and Jumps for If
 
@@ -340,17 +350,14 @@ variables with the same name, duplicates within a list, etc.
 
     `call` does not affect `ebp`, which the program must maintain on its own.
 
-- `IShr`, `IShl`: Bit shifting operations
+- `IShr`, `ISar`, `IShl`: Bit shifting operations
 
 - `IAnd`, `IOr`, `IXor`: Bit masking operations
-
-- `IJo`, `IJno`: Jump to the provided label if the last arithmetic operation
-  did/did not overflow
 
 - `near`: Perform a near jump rather than the default short jump. The default short
   jump is too close to be useful during compilation. We have already
   filled out jump instructions so you don't need to worry about 
-  "short jump our of range" error. 
+  "short jump out of range" error. 
 
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).

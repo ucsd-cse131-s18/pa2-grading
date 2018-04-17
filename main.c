@@ -5,8 +5,8 @@
 #define TRUE 0xFFFFFFFE
 #define FALSE 0x7FFFFFFE
 
-const long int INT_MIN = - (1 << 30);
-const long int INT_MAX = (1 << 30) - 1;
+#define BOA_MIN (- (1 << 30))
+#define BOA_MAX ((1 << 30) - 1)
 
 extern int our_code_starts_here(int input_val) asm("our_code_starts_here");
 extern void error(int val) asm("error");
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
   // FILL IN YOUR CODE FROM HERE
   char * endptr;
   extern int errno;
-  
+
   input_val = FALSE;
   if (argc > 1) {
     if (!strcmp("true", argv[1])) {
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
       if (*endptr != '\0') {
         error(4);
       }
-      else if ( errno || r < INT_MIN || r > INT_MAX) {
+      else if ( errno || r < BOA_MIN || r > BOA_MAX) {
         error(5);
       }
       input_val = r << 1 | 1;

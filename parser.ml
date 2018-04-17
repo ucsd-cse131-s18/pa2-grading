@@ -72,7 +72,7 @@ let rec parse (sexp : Sexplib.Sexp.t) =
         | v1::v2::[] ->
           EPrim2(Greater, (parse v1), (parse v2))
         | _ -> failwith "Error: invalid > syntax")
-     | "=" ->
+     | "==" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Equal, (parse v1), (parse v2))

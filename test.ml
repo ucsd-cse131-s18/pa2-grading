@@ -30,7 +30,7 @@ let let_nested = "(let ((x (+ 5 (+ 10 20)))) (* x x))"
 let complexExpression = "(let ((x 10) (y 5) (z 3)) (let ((t 2)) " ^
                         "(add1 (+ x (+ y (* (- t z) x))))))"
 let ifTest = "(if true 5 6)"
-let ifTestLet = "(let ((x 5)) (if (= x 7) 7 8))"
+let ifTestLet = "(let ((x 5)) (if (== x 7) 7 8))"
 let boolTest = "true"
 let isBoolTest = "(isBool false)"
 let isBoolTestF = "(isBool 5)"
@@ -47,8 +47,8 @@ let plusOne = "(let ((x 1) (y (add1 x)) (z (add1 y))) z)"
 let plusOneScope = "(let ((x 1)) (let ((y (add1 x))) (let ((z (add1 y))) z)))"
 let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
 let complex_if = "(let ((x 6) (y (add1 x))) (if (> (+ 5 7) (* x y)) x y))"
-let equality_check = "(= -1 -1)"
-let nequality_check = "(= 5 6)"
+let equality_check = "(== -1 -1)"
+let nequality_check = "(== 5 6)"
 
 let forty_one_p = EPrim1(Sub1, ENumber(42));;
 let forty_p = EPrim1(Sub1, EPrim1(Sub1, ENumber(42)));;
@@ -128,7 +128,7 @@ let autograde_tests =
     ("lessThanTest", "(< 3 4)", "true");
     ("nlessThanTest", "(< 4 3)", "false");
     ("nlessThanTestEq", "(< 3 3)", "false");
-    ("boolEvalonlyif", "(if (= 5 5) 2 (+ true false))", "2");
+    ("boolEvalonlyif", "(if (== 5 5) 2 (+ true false))", "2");
     ("boolEvalonlyelse", "(if (< 5 5) (+ true false) 3)", "3");
   ]
 
@@ -162,8 +162,8 @@ let autograde_fail_tests =
     ("lessBoolR", "(< 0 false)", "expected a number");
     ("grtrBoolL", "(> true -11230000)", "expected a number");
     ("grtrBoolR", "(> 0 false)", "expected a number");
-    ("eqExpectInt", "(= 0 false)", "expected a number");
-    ("eqExpectBool", "(= false 0)", "expected a bool");
+    ("eqExpectInt", "(== 0 false)", "expected a number");
+    ("eqExpectBool", "(== false 0)", "expected a bool");
     ("lToREval", "(* (+ 0 false) (if 5 3 4))", "expected a number");
     ("boolTypeErr", "(if 5 2 3)", "expected a bool");
     ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");

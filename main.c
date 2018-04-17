@@ -39,18 +39,19 @@ void error(int error_code) {
 }
 
 int main(int argc, char** argv) {
-  int input_val = FALSE;
-  // Fill in your code below
+  int input_val;
+  // FILL IN YOUR CODE FROM HERE
   char * endptr;
   extern int errno;
-
+  
+  input_val = FALSE;
   if (argc > 1) {
     if (!strcmp("true", argv[1])) {
       input_val = TRUE;
     } else if (!strcmp("false", argv[1])) {
       input_val = FALSE;
     } else {
-      char* endptr = (char*) &argv[1];
+      endptr = (char*) &argv[1];
       errno = 0;
       long r = strtol(argv[1], &endptr, 10);
       if (*endptr != '\0') {
@@ -62,6 +63,7 @@ int main(int argc, char** argv) {
       input_val = r << 1 | 1;
     }
   }
+  // YOUR CODE ENDS HERE
   int result = our_code_starts_here(input_val);
   print(result);
   return 0;

@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
       input_val = FALSE;
     } else {
       char* endptr = (char*) &argv[1];
+      errno = 0;
       long r = strtol(argv[1], &endptr, 10);
       if (*endptr != '\0') {
         error(4);

@@ -1,4 +1,5 @@
 open Sexplib.Sexp
+module Sexp = Sexplib.Sexp
 open Expr
 
 let valid_regex = Str.regexp "[a-zA-Z][a-zA-Z0-9]*"
@@ -8,7 +9,7 @@ let int_of_string_opt s =
   try Some(int_of_string s) with
   | _ -> None
 
-let rec parse (sexp : Sexplib.Sexp.t) =
+let rec parse (sexp : Sexp.t) =
   match sexp with
   | List((Atom s)::t) ->
     (match s with

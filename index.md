@@ -111,15 +111,20 @@ representations for the Boa runtime:
 
 ## Handling Input Value
 
-You will implement a new syntactic form — `input`, which should evaluate to a
-user-provided inputted value, which can be a number, true, or false. You need to
-parse the input value in `main.c`, and ensure `compile.ml` will generate code
-to fetched the value off the stack at runtime. The input value should be provided as a command-line argument
+You will implement a pre-defined variable — `input`, which should evaluate to a
+user-provided inputted value, which can be an integer number, true, or false. 
+You need to parse the input value in `main.c` and check for two parsing errors at runtime:
+1. input must be a boolean or a number
+2. input is not a representable number
+If an argument isn't provided to the executable, the default value of `input` should be `false`.
+After the input value is parsed, it will be passed to `our_code_starts_from_here` as a function
+argument that will get stored on its stack frame. To make `input` variable accessible, we add
+(`input`, -1) to the program environment binding. 
+
+The input value should be provided as a command-line argument
 to the _generated executable_.
 
 For example, `./somefile.run 4` makes it so `input` evaluates to 4.
-
-If an argument isn't provided to the executable, the default value of `input` should be `FALSE`.
 
 ### Checking for Errors
 

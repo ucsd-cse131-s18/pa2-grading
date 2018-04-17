@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
       if (*endptr != '\0') {
         error(4);
       }
-      else if ( errno ) {
+      else if ( errno || r < INT_MIN || r > INT_MAX) {
         error(5);
       }
       input_val = r << 1 | 1;

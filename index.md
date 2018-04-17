@@ -37,7 +37,6 @@ The concrete syntax of Boa is:
   | <number>
   | true
   | false
-  | input
   | (add1 <expr>)
   | (sub1 <expr>)
   | (isnum <expr>)

@@ -355,6 +355,13 @@ variables with the same name, duplicates within a list, etc.
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 
+### FAQ
+#### What is well_formed_e supposed to do?
+`well_formed_e is` supposed to return a list of static errors from your source program found during compilation.
+
+#### What is check supposed to do?
+`check` is meant to failwith the errors gathered in `well_formed_e` so compilation terminates and you can see what errors your source program had.
+
 ### Testing Functions
 
 These are the same as they were for Anaconda.  Your tests should

@@ -37,7 +37,6 @@ The concrete syntax of Boa is:
   | <number>
   | true
   | false
-  | input
   | (add1 <expr>)
   | (sub1 <expr>)
   | (isnum <expr>)
@@ -112,15 +111,21 @@ representations for the Boa runtime:
 
 ## Handling Input Value
 
-You will implement a new syntactic form — `input`, which should evaluate to a
-user-provided inputted value, which can be a number, true, or false. You need to
-parse the input value in `main.c`, and ensure `compile.ml` will generate code
-to fetched the value off the stack at runtime. The input value should be provided as a command-line argument
+You will implement a pre-defined variable — `input`, which should evaluate to a
+user-provided inputted value, which can be an integer number, true, or false. 
+You need to parse the input value in `main.c` and check for two parsing errors at runtime:
+1. input must be a boolean or a number
+2. input is not a representable number
+
+If an argument isn't provided to the executable, the default value of `input` should be `false`.
+After the input value is parsed, it will be passed to `our_code_starts_from_here` as a function
+argument that will get stored on its stack frame. To make `input` variable accessible, we add
+(`input`, -1) to the program environment binding. 
+
+The input value should be provided as a command-line argument
 to the _generated executable_.
 
 For example, `./somefile.run 4` makes it so `input` evaluates to 4.
-
-If an argument isn't provided to the executable, the default value of `input` should be `FALSE`.
 
 ### Checking for Errors
 
@@ -342,14 +347,26 @@ variables with the same name, duplicates within a list, etc.
 - `IJo`, `IJno`: Jump to the provided label if the last arithmetic operation
   did/did not overflow
 
+- `near`: Perform a near jump rather than the default short jump. The default short
+  jump is too close to be useful during compilation. We have already
+  filled out jump instructions so you don't need to worry about 
+  "short jump our of range" error. 
+
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 
+### FAQ
+#### What is well_formed_e supposed to do?
+`well_formed_e is` supposed to return a list of static errors from your source program found during compilation.
+
+#### What is check supposed to do?
+`check` is meant to failwith the errors gathered in `well_formed_e` so compilation terminates and you can see what errors your source program had.
 
 ### Testing Functions
 
 These are the same as they were for Anaconda.  Your tests should
-focus on `t` tests.
+focus on `t` tests. In addition, to test command-line argument, 
+you can call `t_i`.
 
 An old friend is helpful here, too: `valgrind`.  You can run `valgrind
 output/some_test.run` in order to get a little more feedback on tests that

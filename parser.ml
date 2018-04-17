@@ -1,6 +1,7 @@
 open Sexplib.Sexp
 open Expr
 
+let valid_regex = Str.regexp "[a-zA-Z][a-zA-Z0-9]*"
 let reserved_words = ["let"; "add1"; "sub1"; "isNum"; "isBool"; "if"]
 let reserved_constants = ["true"; "false"; ]
 let int_of_string_opt s =
@@ -83,7 +84,8 @@ let rec parse (sexp : Sexplib.Sexp.t) =
     (match int_of_string_opt s with
      | Some n -> ENumber(n)
      | None ->
-       if (not (List.mem s reserved_words)) then
+       if (not (List.mem s reserved_words)) &&
+          Str.string_match valid_regex s 0 then
          (match s with
           | "true" -> EBool(true)
           | "false" -> EBool(false)
@@ -98,7 +100,8 @@ and parse_binding binding =
   match binding with
   | List((Atom s)::t::[]) ->
     if (not (List.mem s reserved_words)) &&
-       (not (List.mem s reserved_constants))
+       (not (List.mem s reserved_constants)) &&
+       Str.string_match valid_regex s 0
     then
       (s,parse t)
     else

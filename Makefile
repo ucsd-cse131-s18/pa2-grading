@@ -7,7 +7,7 @@ ifeq ($(UNAME), Darwin)
 endif
 endif
 
-PKGS=oUnit,extlib,unix,sexplib
+PKGS=oUnit,extlib,unix,sexplib,str
 
 BUILD=corebuild -r -use-ocamlfind -pkg $(PKGS) $(OCAMLOPT)
 

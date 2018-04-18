@@ -37,7 +37,7 @@ let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
   | EBool(_) -> []
   | EId(x) ->
     begin match find env x with
-    | None -> ["Variable identifier "^ x ^ " unbounded "]
+    | None -> ["Variable identifier "^ x ^ " unbound "]
     | Some(_) -> []
     end
   | EPrim1(_, e) ->

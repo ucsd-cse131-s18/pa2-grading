@@ -11,7 +11,7 @@ title: "PA2 – Bitwise Offset Arrangement"
 
 In this assignment you'll implement a small language called Boa, which
 implementes a Bitwise Offset Arrangement of different values. It also uses C function calls to implement
-some user-facing operations, like reading an input, printing and reporting errors.
+some user-facing operations, like reading an input and reporting errors.
 
 ## The Boa Language
 
@@ -35,9 +35,6 @@ The concrete syntax of Boa is:
 <expr> :=
   | (let (<bindings>) <expr>)
   | (if <expr> <expr> <expr>)
-  | <binop-expr>
-
-<binop-expr> :=
   | <identifier>
   | <number>
   | true
@@ -57,12 +54,10 @@ The concrete syntax of Boa is:
 <bindings> :=
   | (<identifier> <expr>)
   | (<identifier> <expr>) <bindings>
-}
+
 ```
 
 ### Abstract Syntax
-
-#### User-facing
 
 The abstract syntax of Boa is an OCaml datatype, and corresponds nearly
 one-to-one with the concrete syntax.

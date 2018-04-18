@@ -43,7 +43,6 @@ The concrete syntax of Boa is:
   | (sub1 <expr>)
   | (isnum <expr>)
   | (isbool <expr>)
-  | (print <expr>)
   | (+ <expr> <expr>)
   | (- <expr> <expr>)
   | (* <expr> <expr>)

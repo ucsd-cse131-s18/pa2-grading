@@ -375,11 +375,11 @@ These are the same as they were for Anaconda.  Your tests should
 focus on `t` tests. In addition, to test command-line argument, 
 you can call `t_i`.
 
-An old friend is helpful here, too: `valgrind`.  You can run `valgrind
-output/some_test.run` in order to get a little more feedback on tests that
-fail with `-10` as their exit code (which usually indicates a segfault).  This
-can sometimes tip you off quite well as to how memory is off, since sometimes
-you'll see code trying to jump to a constant that's in your code, or other
-obvious tells that there's something off in the stack.  Also, if you've done
-all your stack management correctly, `valgrind` will report a clean run for
-your program!
+An old friend is helpful here, too: `gdb` (or `lldb` on Mac OSX). 
+You can run `gdb output/some_test.run` in order to get a little more feedback
+on tests that fail with `-10` as their exit code (which usually indicates a
+segfault).  This can sometimes tip you off quite well as to how memory is off,
+since sometimes you'll see code trying to jump to a constant that's in your
+code, or other information about the specific instruction that fails.
+You can use `set disassembly-flavor intel` to have gdb display assembly in the
+intel syntax we use, and otherwise debug assembly as usual in gdb.

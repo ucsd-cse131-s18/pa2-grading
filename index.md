@@ -105,9 +105,9 @@ representations for the Boa runtime:
 
 - `true` will be represented as the constant `0xFFFFFFFE`
 - `false` will be represented as the constant `0x7FFFFFFE`
-- numbers will be represented with a one in the rightmost bit, with the actual
+- numbers will be represented with a one in the rightmost bit, with the actual two's complement
   value shifted to the left by one (as in class).
-  So, for example, `2` is represented as `0x00000005`.
+  So, for example, `2` is represented as `0x00000005`, `-5` is represented as `0xFFFFFFF7`.
 
 ## Handling Input Value
 

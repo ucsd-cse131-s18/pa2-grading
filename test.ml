@@ -15,6 +15,8 @@ let t_f test_type = (fun (name,program,expected) ->
   test_type name program expected)
 let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
 
+let num_pos = "(+ +42 -10)";;
+let num_neg = "(+ -42 +10)";;
 let forty_one = "(sub1 42)";;
 let forty = "(sub1 (sub1 42))";;
 let add1 = "(add1 (add1 (add1 3)))";;
@@ -200,7 +202,9 @@ let suite =
   "suite">:::
   [t_parse "forty_one parse" forty_one forty_one_p;
   ] @
-  [t "forty_one" forty_one "41";
+  [t "num_pos" num_pos "32";
+   t "num_neg" num_neg "-32";
+   t "forty_one" forty_one "41";
    t "forty" forty "40";
    t "add1" add1 "6";
    t "def_x" def_x "5";

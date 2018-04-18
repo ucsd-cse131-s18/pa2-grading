@@ -177,7 +177,7 @@ let failTypes = "(add1 true)"
 let testFailList =
   [
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
-   t_err "failID" failID "Compile error: Variable identifier x unbounded";
+   t_err "failID" failID "Compile error: Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
    terr_i "failInputType" "(add1 input)" "expected a number" ["true"];

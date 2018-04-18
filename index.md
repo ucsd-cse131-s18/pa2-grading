@@ -105,7 +105,8 @@ representations for the Boa runtime:
 
 - `true` will be represented as the constant `0xFFFFFFFE`
 - `false` will be represented as the constant `0x7FFFFFFE`
-- numbers will be represented with a one in the rightmost bit, as in class.
+- numbers will be represented with a one in the rightmost bit, with the actual
+  value shifted to the left by one (as in class).
   So, for example, `2` is represented as `0x00000005`.
 
 ## Handling Input Value
@@ -130,8 +131,8 @@ For example, `./somefile.run 4` makes it so `input` evaluates to 4.
 
 #### The check function
 
-We will be asking you to write up the check function which will statically type
-check your program before compilation. We expect check to return a list of strings
+We will be asking you to write up the check function which will check your program
+before compilation. We expect check to return a list of strings
 containing an exact series of error messages. We will be testing against this function
 so be sure to match the expected output.
 
@@ -139,7 +140,7 @@ The only errors you will need to check here are:
 
 - Unbound Identifier ie. `EId` not in the scope of an `ELet`
 
-  Error string = "Variable identifier {id name} unbounded"
+  Error string = "Variable identifier {id name} unbound"
 
 - Multiple Bindings ie. `ELet([("x", ENumber(2)); ("y", ENumber(5)); ("x", ENumber(5))], EId(x))`
 
@@ -291,12 +292,6 @@ end_of_if2:
 
 And if there were a _nested_ if expression, it might have labels like
 `else_branch3` and `end_of_if4`.
-
-### A Note on Scope
-
-For this assignment, you can assume that all variables have different names.
-That means in particular you don't need to worry about nested instances of
-variables with the same name, duplicates within a list, etc.
 
 ### Other Constructs
 

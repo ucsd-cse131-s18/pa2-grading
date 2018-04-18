@@ -164,8 +164,6 @@ let autograde_fail_tests =
     ("lessBoolR", "(< 0 false)", "expected a number");
     ("grtrBoolL", "(> true -11230000)", "expected a number");
     ("grtrBoolR", "(> 0 false)", "expected a number");
-    ("eqExpectInt", "(== 0 false)", "expected a number");
-    ("eqExpectBool", "(== false 0)", "expected a bool");
     ("lToREval", "(* (+ 0 false) (if 5 3 4))", "expected a number");
     ("boolTypeErr", "(if 5 2 3)", "expected a bool");
     ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");

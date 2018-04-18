@@ -206,21 +206,8 @@ and compile_prim2 op e1 e2 si env =
      (check_nums (Reg(EAX)) (stackloc si))) @
     (IMov(Reg(EAX), stackloc(si + 1))::instrs)
   else
-    let valid = gen_temp "valid_eq" in
     first_op @ [IMov((stackloc si),Reg(EAX))] @ second_op @
-    ([IMov(stackloc (si + 1), Reg(EAX));
-      (* If the lowest bit after the xor is 1, the two types were different *)
-      IXor(Reg(EAX), (stackloc si));
-      IAnd(Reg(EAX), Const(1));
-      ICmp(Reg(EAX), Const(1));
-      IMov(Reg(EAX), stackloc (si + 1));
-      IJne(valid);
-      IAnd(Reg(EAX), Const(1));
-      ICmp(Reg(EAX), Const(0));
-      IJe(error_non_int);
-      IJmp(error_non_bool);
-      ILabel(valid);] @
-     instrs)
+    instrs
 
 let compile_to_string prog =
   let _ = check prog in

@@ -41,8 +41,8 @@ The concrete syntax of Boa is:
   | false
   | (add1 <expr>)
   | (sub1 <expr>)
-  | (isnum <expr>)
-  | (isbool <expr>)
+  | (isNum <expr>)
+  | (isBool <expr>)
   | (+ <expr> <expr>)
   | (- <expr> <expr>)
   | (* <expr> <expr>)
@@ -107,6 +107,23 @@ representations for the Boa runtime:
 - numbers will be represented with a one in the rightmost bit, with the actual two's complement
   value shifted to the left by one (as in class).
   So, for example, `2` is represented as `0x00000005`, `-5` is represented as `0xFFFFFFF7`.
+
+If integer literals exceed the range of representable value, two types of errors should be handled:
+- Unable to parse non-representable integer literal error
+
+For example, the following BOA program
+```
+9999999999999999
+```
+should throw `Non-representable number 9999999999999999` before compilation.
+
+- Runtime overflow error
+
+For example, the following BOA program 
+```
+1073741823 + 10
+```
+should throw `overflow` at runtime.
 
 ## Handling Input Value
 
@@ -357,6 +374,9 @@ guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 
 #### What is check supposed to do?
 `check` is meant to failwith the errors gathered in `well_formed_e` so compilation terminates and you can see what errors your source program had.
+
+#### What is a valid id name?
+You can assume that an id is a valid string of form [a-zA-z][a-zA-Z0-9]*. You will, however, have to check that the string does not match any of the language's reserved words.
 
 ### Testing Functions
 

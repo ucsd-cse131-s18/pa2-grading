@@ -13,10 +13,9 @@ let t_parse name program expected =
   name>::(fun _ -> assert_equal expected (Runner.parse_string program));;
 let t_f test_type = (fun (name,program,expected) ->
   test_type name program expected)
-let f_to_s fname = Runner.string_of_file ("input/" ^ fname)
+let f_to_s fname = Runner.string_of_file ("input/" ^ fname ^ ".boa")
 
-let num_pos = "(+ +42 -10)";;
-let num_neg = "(+ -42 +10)";;
+let num_neg = "(+ -42 10)";;
 let forty_one = "(sub1 42)";;
 let forty = "(sub1 (sub1 42))";;
 let add1 = "(add1 (add1 (add1 3)))";;
@@ -51,6 +50,8 @@ let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
 let complex_if = "(let ((x 6) (y (add1 x))) (if (> (+ 5 7) (* x y)) x y))"
 let equality_check = "(== -1 -1)"
 let nequality_check = "(== 5 6)"
+let num_p_overflow = "1073741824"
+let num_p_underflow = "-1073741825"
 
 let forty_one_p = EPrim1(Sub1, ENumber(42));;
 let forty_p = EPrim1(Sub1, EPrim1(Sub1, ENumber(42)));;
@@ -115,15 +116,15 @@ let autograde_tests =
   [
     ("Num", "5", "5");
     ("Prim", "(add1 0)", "1");
-    ("letTest_f", (f_to_s "letTest.ana"), "6");
-    ("manyOpTest_f", (f_to_s "manyOpTest.ana"), "-52");
+    ("letTest_f", (f_to_s "letTest"), "6");
+    ("manyOpTest_f", (f_to_s "manyOpTest"), "-52");
     ("deepArith", deeparith, "1117");
     ("lotOfLet", lotOfLet, "1");
     ("quickBrownFox", quickBrownFox, "-3776");
     ("plusOne", plusOne, "3");
     ("plusOneScope", plusOneScope, "3");
     ("harmonic", harmonic, "-1");
-    ("input_t", (f_to_s "input.ana"), "false");
+    ("input_t", (f_to_s "input"), "false");
     ("complex_if", complex_if, "7");
     ("equality_check", equality_check, "true");
     ("nequality_check", nequality_check, "false");
@@ -179,6 +180,8 @@ let testFailList =
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
    t_err "failID" failID "Compile error: Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
+   t_err "parserNumOverflow" num_p_overflow "Non-representable number"; 
+   t_err "parserNumUnderflow" num_p_underflow "Non-representable number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
    terr_i "failInputType" "(add1 input)" "expected a number" ["true"];
   ]
@@ -200,8 +203,7 @@ let suite =
   "suite">:::
   [t_parse "forty_one parse" forty_one forty_one_p;
   ] @
-  [t "num_pos" num_pos "32";
-   t "num_neg" num_neg "-32";
+  [t "num_neg" num_neg "-32";
    t "forty_one" forty_one "41";
    t "forty" forty "40";
    t "add1" add1 "6";

@@ -109,7 +109,8 @@ representations for the Boa runtime:
   So, for example, `2` is represented as `0x00000005`, `-5` is represented as `0xFFFFFFF7`.
 
 If integer literals exceed the range of representable value, two types of errors should be handled:
-- Cannot parse non-representable integer literal error
+- Unable to parse non-representable integer literal error
+
 For example, the following BOA program
 ```
 9999999999999999
@@ -117,6 +118,7 @@ For example, the following BOA program
 should throw `Non-representable number 9999999999999999`.
 
 - Runtime overflow error
+
 For example, the following BOA program 
 ```
 1073741823 + 10

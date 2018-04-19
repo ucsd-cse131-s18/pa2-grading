@@ -135,7 +135,7 @@ You need to parse the input value in `main.c` and check for two parsing errors a
 
 If an argument isn't provided to the executable, the default value of `input` should be `false`.
 After the input value is parsed, it will be passed to `our_code_starts_from_here` as a function
-argument that will get stored on its stack frame. To make `input` variable accessible, we add
+argument that will get stored on its stack frame. To make `input` variable accessible to BOA, we add
 (`input`, -1) to the program environment binding. 
 
 The input value should be provided as a command-line argument

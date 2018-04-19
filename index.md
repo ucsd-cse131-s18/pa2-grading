@@ -114,14 +114,14 @@ For example, the following BOA program
 ```
 9999999999999999
 ```
-should throw a non-representable integer literal error.
+should throw `Non-representable number 9999999999999999`.
 
 - Runtime overflow error
 For example, the following BOA program 
 ```
 1073741823 + 10
 ```
-should throw runtime overflow error
+should throw `overflow`.
 
 ## Handling Input Value
 

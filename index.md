@@ -368,6 +368,16 @@ And if there were a _nested_ if expression, it might have labels like
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 
+### Print Return Value from BOA in C
+When BOA returns, it saves the return value in register EAX. In C, return value goes into EAX
+by convention. Then, it is saved in the `result` variable. You need to print the 
+return value in C. Since in BOA, values are tagged, you need to do bitwise manipulations before
+printing the values in C. 
+
+For example, if the return value is `0xFFFFFFFE` or 0x7FFFFFFE, you should print `true\n` or `false\n`. 
+If the return value is a `0xFFFFFFF7`, you should print `-5\n`.
+Otherwise print the value in using this printf format `Unknown value: %#010x\n`.
+
 ### FAQ
 #### What is well_formed_e supposed to do?
 `well_formed_e is` supposed to return a list of static errors from your source program found during compilation.

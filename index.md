@@ -41,8 +41,8 @@ The concrete syntax of Boa is:
   | false
   | (add1 <expr>)
   | (sub1 <expr>)
-  | (isnum <expr>)
-  | (isbool <expr>)
+  | (isNum <expr>)
+  | (isBool <expr>)
   | (+ <expr> <expr>)
   | (- <expr> <expr>)
   | (* <expr> <expr>)

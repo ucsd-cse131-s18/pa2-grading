@@ -358,6 +358,9 @@ guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 #### What is check supposed to do?
 `check` is meant to failwith the errors gathered in `well_formed_e` so compilation terminates and you can see what errors your source program had.
 
+#### What is a valid id name?
+You can assume that an id is a valid string of form [a-zA-z][a-zA-Z0-9]*. You will, however, have to check that the string does not match any of the language's reserved words.
+
 ### Testing Functions
 
 These are the same as they were for Anaconda.  Your tests should

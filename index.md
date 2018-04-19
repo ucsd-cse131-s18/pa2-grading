@@ -111,7 +111,7 @@ representations for the Boa runtime:
 If integer literals exceed the range of representable value, two types of errors should be handled:
 - Unable to parse non-representable integer literal error
 
-For example, the following BOA program
+For example, the following Boa program
 ```
 9999999999999999
 ```
@@ -119,7 +119,7 @@ should throw `Non-representable number 9999999999999999` before compilation.
 
 - Runtime overflow error
 
-For example, the following BOA program 
+For example, the following Boa program 
 ```
 1073741823 + 10
 ```
@@ -135,7 +135,7 @@ You need to parse the input value in `main.c` and check for two parsing errors a
 
 If an argument isn't provided to the executable, the default value of `input` should be `false`.
 After the input value is parsed, it will be passed to `our_code_starts_from_here` as a function
-argument that will get stored on its stack frame. To make `input` variable accessible to BOA, we add
+argument that will get stored on its stack frame. To make `input` variable accessible to Boa, we add
 (`input`, -1) to the program environment binding. 
 
 The input value should be provided as a command-line argument
@@ -368,11 +368,10 @@ And if there were a _nested_ if expression, it might have labels like
 As usual, full summaries of the instructions we use are at [this assembly
 guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html).
 
-### Print Return Value from BOA in C
-When BOA returns, it saves the return value in register EAX. In C, return value goes into EAX
-by convention. Then, it is saved in the `result` variable. You need to print the 
-return value in C. Since in BOA, values are tagged, you need to do bitwise manipulations before
-printing the values in C. 
+### Printing Tagged Value in C
+When Boa returns, it saves the return value in register EAX. In C, return value goes into EAX
+by convention. To print the return value, you need to fill out `print` function. Since values
+are tagged in Boa, you need to do bitwise manipulations before using printf.
 
 For example, if the return value is `0xFFFFFFFE` or 0x7FFFFFFE, you should print `true\n` or `false\n`. 
 If the return value is a `0xFFFFFFF7`, you should print `-5\n`.

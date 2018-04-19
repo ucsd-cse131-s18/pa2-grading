@@ -115,7 +115,7 @@ For example, the following BOA program
 ```
 9999999999999999
 ```
-should throw `Non-representable number 9999999999999999`.
+should throw `Non-representable number 9999999999999999` before compilation.
 
 - Runtime overflow error
 
@@ -123,7 +123,7 @@ For example, the following BOA program
 ```
 1073741823 + 10
 ```
-should throw `overflow`.
+should throw `overflow` at runtime.
 
 ## Handling Input Value
 

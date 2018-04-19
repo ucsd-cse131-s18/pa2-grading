@@ -108,6 +108,10 @@ representations for the Boa runtime:
   value shifted to the left by one (as in class).
   So, for example, `2` is represented as `0x00000005`, `-5` is represented as `0xFFFFFFF7`.
 
+If integer literals exceed the range of representable value, two types of errors should be handled:
+- Parser overflow error
+- Runtime overflow error
+
 ## Handling Input Value
 
 You will implement a pre-defined variable — `input`, which should evaluate to a

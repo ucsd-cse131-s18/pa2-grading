@@ -2,7 +2,10 @@ open Sexplib.Sexp
 module Sexp = Sexplib.Sexp
 open Expr
 
-let valid_regex = Str.regexp "[a-zA-Z][a-zA-Z0-9]*"
+let boa_max = int_of_float(2.**30.) - 1;;
+let boa_min = -int_of_float(2.**30.);;
+let valid_id_regex = Str.regexp "[a-zA-Z][a-zA-Z0-9]*"
+let number_regex = Str.regexp "^[-]?[0-9]+"
 let reserved_words = ["let"; "add1"; "sub1"; "isNum"; "isBool"; "if"]
 let reserved_constants = ["true"; "false"; ]
 let int_of_string_opt s =
@@ -82,11 +85,15 @@ let rec parse (sexp : Sexp.t) =
        let s = Printf.sprintf "Error: unknown sexp %s" (to_string_hum sexp) in
        failwith s)
   | Atom s ->
-    (match int_of_string_opt s with
-     | Some n -> ENumber(n)
-     | None ->
-       if (not (List.mem s reserved_words)) &&
-          Str.string_match valid_regex s 0 then
+    (if Str.string_match number_regex s 0 then 
+     (match int_of_string_opt s with
+     | Some n -> (if n > boa_max || n < boa_min then 
+            failwith ("Error: Non-representable number "^ s)
+         else
+            ENumber(n))
+     | None -> failwith ("Error: Non-representable number " ^s))  
+     else if (not (List.mem s reserved_words)) &&
+          Str.string_match valid_id_regex s 0 then
          (match s with
           | "true" -> EBool(true)
           | "false" -> EBool(false)
@@ -102,7 +109,7 @@ and parse_binding binding =
   | List((Atom s)::t::[]) ->
     if (not (List.mem s reserved_words)) &&
        (not (List.mem s reserved_constants)) &&
-       Str.string_match valid_regex s 0
+       Str.string_match valid_id_regex s 0
     then
       (s,parse t)
     else

@@ -50,6 +50,8 @@ let harmonic = "(sub1 (sub1 (add1 (add1 (sub1 (sub1 (add1 (* 1 (* 1 0)))))))))"
 let complex_if = "(let ((x 6) (y (add1 x))) (if (> (+ 5 7) (* x y)) x y))"
 let equality_check = "(== -1 -1)"
 let nequality_check = "(== 5 6)"
+let num_p_overflow = "1073741824"
+let num_p_underflow = "-1073741825"
 
 let forty_one_p = EPrim1(Sub1, ENumber(42));;
 let forty_p = EPrim1(Sub1, EPrim1(Sub1, ENumber(42)));;
@@ -180,6 +182,8 @@ let testFailList =
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
    t_err "failID" failID "Compile error: Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
+   t_err "parserNumOverflow" num_p_overflow "Non-representable number"; 
+   t_err "parserNumUnderflow" num_p_underflow "Non-representable number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
    terr_i "failInputType" "(add1 input)" "expected a number" ["true"];
   ]

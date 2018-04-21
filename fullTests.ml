@@ -125,9 +125,14 @@ let autograde_tests =
     ("plusOneScope", plusOneScope, "3");
     ("harmonic", harmonic, "-1");
     ("input_t", (f_to_s "input"), "false");
+    ("complex_if", complex_if, "7");
     ("equality_check", equality_check, "true");
+    ("nequality_check", nequality_check, "false");
     ("lessThanTest", "(< 3 4)", "true");
+    ("nlessThanTest", "(< 4 3)", "false");
+    ("nlessThanTestEq", "(< 3 3)", "false");
     ("boolEvalonlyif", "(if (== 5 5) 2 (+ true false))", "2");
+    ("boolEvalonlyelse", "(if (< 5 5) (+ true false) 3)", "3");
   ]
 
 let autograde_fail_tests =
@@ -143,9 +148,26 @@ let autograde_fail_tests =
     ("* syntax", "(* 1 2 3)", "Error: invalid * syntax");
     ("invalid sexp", "()", "Error: unknown sexp ()");
     ("overflowAdd1", "(add1 1073741823)", "overflow");
+    ("underflowSub1", "(sub1 -1073741824)", "overflow");
+    ("overflowAdd", "(+ 1073741811 100000)", "overflow");
+    ("overflowSub", "(- 1073741811 -100000)", "overflow");
+    ("underFlowAdd", "(+ -1073741811 -100000)", "overflow");
+    ("underFlowSub", "(- -1073741811 100000)", "overflow");
+    ("overFlowTimes", "(* 1000000 100000)", "overflow");
+    ("underflowTimes", "(* 1000000 -11230000)", "overflow");
     ("addBoolL", "(+ true -11230000)", "expected a number");
+    ("addBoolR", "(+ 0 false)", "expected a number");
+    ("subBoolL", "(- true -11230000)", "expected a number");
+    ("subBoolR", "(- 0 false)", "expected a number");
+    ("mulBoolL", "(* true -11230000)", "expected a number");
+    ("mulBoolR", "(* 0 false)", "expected a number");
     ("lessBoolL", "(< true -11230000)", "expected a number");
+    ("lessBoolR", "(< 0 false)", "expected a number");
+    ("grtrBoolL", "(> true -11230000)", "expected a number");
+    ("grtrBoolR", "(> 0 false)", "expected a number");
+    ("lToREval", "(* (+ 0 false) (if 5 3 4))", "expected a number");
     ("boolTypeErr", "(if 5 2 3)", "expected a bool");
+    ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");
     ("invalidID", "$ASD", "Invalid");
   ]
 
@@ -159,6 +181,7 @@ let testFailList =
    t_err "failID" failID "Compile error: Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
    t_err "parserNumOverflow" num_p_overflow "Non-representable number"; 
+   t_err "parserNumUnderflow" num_p_underflow "Non-representable number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
    terr_i "failInputType" "(add1 input)" "expected a number" ["true"];
   ]
@@ -166,10 +189,14 @@ let testFailList =
 let input_tests =
  [ t_i "input1" "input" "42" ["42"]
  ; t_i "input2" "input" "true" ["true"]
+ ; t_i "input3" "input" "false" ["false"]
  ; t_i "input_default" "input" "false" []
+ ; t_i "input_shadow" "(let ((input 10)) input)" "10" ["true"]
 
  ; terr_i "inputerr1" "input" "Error: input must be a boolean or a number" ["ABC"]
  ; terr_i "inputerr_max" "input" "Error: input is not a representable number" ["1073741824"]
+ ; terr_i "inputerr_min" "input" "Error: input is not a representable number" ["-1073741825"]
+ ; terr_i "inputerr_case" "input" "Error: input must be a boolean or a number" ["False"]
  ]
 
 let suite =
@@ -190,8 +217,11 @@ let suite =
    t "nested_arith" nested_arith "0";
    t "let_nested" let_nested "1225";
    t "complexExpression" complexExpression "6";
+   t "boolTest" boolTest "true";
    t "if_Test" ifTest "5";
+   t "ifTestLet" ifTestLet "8";
    t "isBoolTest" isBoolTest "true";
+   t "isBoolTestF" isBoolTestF "false";
    t "isNumTest" isNumTest "true";
    t_i "inputTest" "(add1 input)" "6" ["5"];
   ] @ testFailList

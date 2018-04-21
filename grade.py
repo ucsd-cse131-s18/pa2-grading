@@ -4,7 +4,15 @@ import subprocess
 import shutil
 import re
 
-shutil.copy2("test.ml", "/autograder/submission/")
+# change this when running the final autograder
+runFullTests = False
+
+if runFullTests:
+    shutil.copy2("fullTests.ml", "/autograder/submission/")
+    shutil.move("/autograder/submission/fullTests.ml", "/autograder/submission/test.ml")
+else:
+    shutil.copy2("test.ml", "/autograder/submission/")
+
 shutil.move("/autograder/submission/input/", "/autograder/submission/stu-input")
 shutil.copytree("input", "/autograder/submission/input/")
 os.chdir("/autograder/submission/")

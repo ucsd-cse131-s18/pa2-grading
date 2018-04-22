@@ -22,7 +22,7 @@ let rec parse (sexp : Sexp.t) =
           let binds = List.map parse_binding bindings in
           let body = parse body in
           ELet(binds, body)
-        | _ -> failwith "Error: invalid let syntax")
+        | _ -> failwith "Error: Invalid let syntax")
      | "if" ->
        (match t with
         | ifexpr::thenexpr::elseexpr::[] ->
@@ -30,7 +30,7 @@ let rec parse (sexp : Sexp.t) =
           let thenexpr = parse thenexpr in
           let elseexpr = parse elseexpr in
           EIf(ifexpr, thenexpr, elseexpr)
-        | _ -> failwith "Error: invalid let syntax")
+        | _ -> failwith "Error: Invalid let syntax")
      |  "add1" ->
        (match t with
         | t::[] ->
@@ -45,53 +45,53 @@ let rec parse (sexp : Sexp.t) =
        (match t with
         | v1::[] ->
           EPrim1(IsNum, (parse v1))
-        | _ -> failwith "Error: invalid isNum syntax")
+        | _ -> failwith "Error: Invalid isNum syntax")
      | "isBool" ->
        (match t with
         | v1::[] ->
           EPrim1(IsBool, (parse v1))
-        | _ -> failwith "Error: invalid isNum syntax")
+        | _ -> failwith "Error: Invalid isNum syntax")
      |  "+" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Plus, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid + syntax")
+        | _ -> failwith "Error: Invalid + syntax")
      | "-" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Minus, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid - syntax")
+        | _ -> failwith "Error: Invalid - syntax")
      | "*" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Times, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid * syntax")
+        | _ -> failwith "Error: Invalid * syntax")
      | "<" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Less, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid < syntax")
+        | _ -> failwith "Error: Invalid < syntax")
      | ">" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Greater, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid > syntax")
+        | _ -> failwith "Error: Invalid > syntax")
      | "==" ->
        (match t with
         | v1::v2::[] ->
           EPrim2(Equal, (parse v1), (parse v2))
-        | _ -> failwith "Error: invalid = syntax")
+        | _ -> failwith "Error: Invalid = syntax")
      | _ ->
        let s = Printf.sprintf "Error: unknown sexp %s" (to_string_hum sexp) in
        failwith s)
   | Atom s ->
-    (if Str.string_match number_regex s 0 then 
+    (if Str.string_match number_regex s 0 then
      (match int_of_string_opt s with
-     | Some n -> (if n > boa_max || n < boa_min then 
+     | Some n -> (if n > boa_max || n < boa_min then
             failwith ("Error: Non-representable number "^ s)
          else
             ENumber(n))
-     | None -> failwith ("Error: Non-representable number " ^s))  
+     | None -> failwith ("Error: Non-representable number " ^s))
      else if (not (List.mem s reserved_words)) &&
           Str.string_match valid_id_regex s 0 then
          (match s with
@@ -114,4 +114,4 @@ and parse_binding binding =
       (s,parse t)
     else
       failwith ("Invalid or unexpected name " ^ s)
-  | _ -> failwith "Error: invalid binding structure"
+  | _ -> failwith "Error: Invalid binding structure"

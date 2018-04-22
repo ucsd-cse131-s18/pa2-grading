@@ -132,15 +132,15 @@ let autograde_tests =
 
 let autograde_fail_tests =
   [
-    ("parse_let", "(let ((let 5)) let)", "Invalid or unexpected name let");
+    ("parse_let", "(let ((let 5)) let)", "Invalid");
     ("complexExpressionParens parse", complexExpressionParens,
-      "Error: invalid binding structure");
-    ("let syntax", "(let ((x 1)) x x)", "Error: invalid let syntax");
-    ("add1 args", "(add1 1 2)", "Error: Too many arguments to add1");
-    ("sub1 args", "(sub1 2 1)", "Error: Too many arguments to sub1");
-    ("+ syntax", "(+ 1 2 3)", "Error: invalid + syntax");
-    ("- syntax", "(- 3 2 1)", "Error: invalid - syntax");
-    ("* syntax", "(* 1 2 3)", "Error: invalid * syntax");
+     "Invalid");
+    ("let syntax", "(let ((x 1)) x x)", "Invalid let syntax");
+    ("add1 args", "(add1 1 2)", "Too many arguments to add1");
+    ("sub1 args", "(sub1 2 1)", "Too many arguments to sub1");
+    ("+ syntax", "(+ 1 2 3)", "Invalid + syntax");
+    ("- syntax", "(- 3 2 1)", "Invalid - syntax");
+    ("* syntax", "(* 1 2 3)", "Invalid * syntax");
     ("invalid sexp", "()", "Error: unknown sexp ()");
     ("overflowAdd1", "(add1 1073741823)", "overflow");
     ("addBoolL", "(+ true -11230000)", "expected a number");
@@ -158,7 +158,7 @@ let testFailList =
    t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
    t_err "failID" failID "Compile error: Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
-   t_err "parserNumOverflow" num_p_overflow "Non-representable number"; 
+   t_err "parserNumOverflow" num_p_overflow "Non-representable number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];
    terr_i "failInputType" "(add1 input)" "expected a number" ["true"];
   ]

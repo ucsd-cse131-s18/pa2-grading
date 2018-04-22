@@ -58,7 +58,7 @@ total_score = {
             "name":
                 "Test cases: %d/%d tests passed" % (tests_passed, test_cases),
             "output": out_build + "\n" + out_run,
-            "score": tests_passed * 2
+            "score": tests_passed
         },
         {
             "name": "stderr",

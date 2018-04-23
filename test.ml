@@ -135,13 +135,13 @@ let autograde_fail_tests =
     ("parse_let", "(let ((let 5)) let)", "Invalid");
     ("complexExpressionParens parse", complexExpressionParens,
      "Invalid");
-    ("let syntax", "(let ((x 1)) x x)", "Invalid let syntax");
-    ("add1 args", "(add1 1 2)", "Too many arguments to add1");
-    ("sub1 args", "(sub1 2 1)", "Too many arguments to sub1");
-    ("+ syntax", "(+ 1 2 3)", "Invalid + syntax");
-    ("- syntax", "(- 3 2 1)", "Invalid - syntax");
-    ("* syntax", "(* 1 2 3)", "Invalid * syntax");
-    ("invalid sexp", "()", "Error: unknown sexp ()");
+    ("let syntax", "(let ((x 1)) x x)", "Invalid");
+    ("add1 args", "(add1 1 2)", "Invalid");
+    ("sub1 args", "(sub1 2 1)", "Invalid");
+    ("+ syntax", "(+ 1 2 3)", "Invalid");
+    ("- syntax", "(- 3 2 1)", "Invalid");
+    ("* syntax", "(* 1 2 3)", "Invalid");
+    ("invalid sexp", "()", "unknown sexp");
     ("overflowAdd1", "(add1 1073741823)", "overflow");
     ("addBoolL", "(+ true -11230000)", "expected a number");
     ("lessBoolL", "(< true -11230000)", "expected a number");

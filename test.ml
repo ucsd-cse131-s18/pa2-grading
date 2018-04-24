@@ -168,8 +168,8 @@ let input_tests =
  ; t_i "input2" "input" "true" ["true"]
  ; t_i "input_default" "input" "false" []
 
- ; terr_i "inputerr1" "input" "Error: input must be a boolean or a number" ["ABC"]
- ; terr_i "inputerr_max" "input" "Error: input is not a representable number" ["1073741824"]
+ ; terr_i "inputerr1" "input" "input must be a boolean or a number" ["ABC"]
+ ; terr_i "inputerr_max" "input" "input is not a representable number" ["1073741824"]
  ]
 
 let suite =

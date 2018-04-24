@@ -177,8 +177,8 @@ let failTypes = "(add1 true)"
 
 let testFailList =
   [
-   t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
-   t_err "failID" failID "Compile error: Variable identifier x unbound";
+   t_err "failLet" failLet "Multiple bindings for variable identifier x";
+   t_err "failID" failID "Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
    t_err "parserNumOverflow" num_p_overflow "Non-representable number";
    t_err "parserNumUnderflow" num_p_underflow "Non-representable number";
@@ -193,10 +193,10 @@ let input_tests =
  ; t_i "input_default" "input" "false" []
  ; t_i "input_shadow" "(let ((input 10)) input)" "10" ["true"]
 
- ; terr_i "inputerr1" "input" "Error: input must be a boolean or a number" ["ABC"]
- ; terr_i "inputerr_max" "input" "Error: input is not a representable number" ["1073741824"]
- ; terr_i "inputerr_min" "input" "Error: input is not a representable number" ["-1073741825"]
- ; terr_i "inputerr_case" "input" "Error: input must be a boolean or a number" ["False"]
+ ; terr_i "inputerr1" "input" "input must be a boolean or a number" ["ABC"]
+ ; terr_i "inputerr_max" "input" "input is not a representable number" ["1073741824"]
+ ; terr_i "inputerr_min" "input" "input is not a representable number" ["-1073741825"]
+ ; terr_i "inputerr_case" "input" "input must be a boolean or a number" ["False"]
  ]
 
 let suite =

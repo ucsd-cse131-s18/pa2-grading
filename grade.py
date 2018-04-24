@@ -51,8 +51,12 @@ if os.path.exists("results.log"):
         tests_errored = int(re.search('Errors: (\d+).', lines[-5]).group(1))
         tests_passed = test_cases - tests_failed - tests_errored
 
+topLevelOutput = ""
+if not runFullTests:
+    topLevelOutput = "The test suite below contains 79 tests. After the final turnin deadline for this PA, we will rerun your submission against a test suite that contains 110 tests. Your final score will be out of 110."
+
 total_score = {
-    'output': "",
+    'output': topLevelOutput,
     'tests': [
         {
             "name":

@@ -35,12 +35,12 @@ let rec parse (sexp : Sexp.t) =
        (match t with
         | t::[] ->
           EPrim1(Add1, (parse t))
-        | _ -> failwith "Error: Too many arguments to add1")
+        | _ -> failwith "Error: Invalid number of arguments to add1")
      | "sub1" ->
        (match t with
         | t::[] ->
           EPrim1(Sub1, (parse t))
-        | _ -> failwith "Error: Too many arguments to sub1")
+        | _ -> failwith "Error: Invalid number of arguments to sub1")
      | "isNum" ->
        (match t with
         | v1::[] ->

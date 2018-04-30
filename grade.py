@@ -5,7 +5,7 @@ import shutil
 import re
 
 # change this when running the final autograder
-runFullTests = False
+runFullTests = True
 
 if runFullTests:
     shutil.copy2("fullTests.ml", "/autograder/submission/")

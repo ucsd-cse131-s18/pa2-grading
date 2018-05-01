@@ -60,7 +60,7 @@ let rec well_formed_e (e : expr) (env : (string * int) list) : string list =
              if List.mem name nameAcc then
                extBinds t nameAcc
                  (errAcc@["Multiple bindings for variable identifier " ^ name]@
-                  (well_formed_e value env)) envAcc
+                  (well_formed_e value envAcc)) envAcc
              else
                extBinds t (name::nameAcc)
                  (errAcc@(well_formed_e value envAcc)) ((name,0)::envAcc))

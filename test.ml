@@ -155,8 +155,8 @@ let failTypes = "(add1 true)"
 
 let testFailList =
   [
-   t_err "failLet" failLet "Compile error: Multiple bindings for variable identifier x";
-   t_err "failID" failID "Compile error: Variable identifier x unbound";
+   t_err "failLet" failLet "Multiple bindings for variable identifier x";
+   t_err "failID" failID "Variable identifier x unbound";
    t_err "failTypes" failTypes "expected a number";
    t_err "parserNumOverflow" num_p_overflow "Non-representable number";
    terr_i "failInput" "input" "input must be a boolean or a number" ["0r"];

@@ -168,7 +168,6 @@ let autograde_fail_tests =
     ("lToREval", "(* (+ 0 false) (if 5 3 4))", "expected a number");
     ("boolTypeErr", "(if 5 2 3)", "expected a bool");
     ("boolTypeErrExpr", "(if (+ 5 7) 2 3)", "expected a bool");
-    ("invalidID", "$ASD", "Invalid");
   ]
 
 let failLet = "(let ((x  1) (y 1) (x 10)) x)"
